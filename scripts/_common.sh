@@ -21,11 +21,11 @@ _git_clone_or_pull() {
     fi
 
     if [ -d "$repo_dir" ]; then
-        ynh_exec_as "$app" git -C "$repo_dir" fetch --quiet
+        ynh_exec_as_app git -C "$repo_dir" fetch --quiet
     else
-        ynh_exec_as "$app" git clone "$repo_url" "$repo_dir" --quiet
+        ynh_exec_as_app git clone "$repo_url" "$repo_dir" --quiet
     fi
-    ynh_exec_as "$app" git -C "$repo_dir" pull --quiet
+    ynh_exec_as_app git -C "$repo_dir" pull --quiet
 }
 
 tweak_yunohost() {
@@ -45,7 +45,7 @@ setup_incus() {
     # ci_user will be the one launching job, gives it permission to run incus commands
     usermod -a -G incus-admin "$app"
 
-    ynh_exec_as "$app" incus remote add yunohost https://repo.yunohost.org/incus --protocol simplestreams --public
+    ynh_exec_as_app incus remote add yunohost https://repo.yunohost.org/incus --protocol simplestreams --public
 }
 
 #=================================================
