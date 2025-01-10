@@ -53,8 +53,8 @@ ynh_script_progression --message="Configuring YunoRunner settings..."
 
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
-BASE_PUBLIC_URL = "${publicdir:-}"
-EXECUTOR = "${executor:-}"
+BASE_PUBLIC_URL = "$publicdir"
+EXECUTOR = "$executor"
 APPSREPO = "$appsrepo"
 PORT = 8095
 MONITOR_APPS_LIST = False
