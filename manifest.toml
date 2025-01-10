@@ -70,24 +70,24 @@ ram.runtime = "50M"
     [install.githubtoken]
     ask.en = "Provide your github personal access token here"
     type = "string"
-    optional = "false"
+    optional = false
 
     [install.webhooksecret]
     ask.en = "Provide your created webhook secret token"
     type = "string"
-    optional = "false"
+    optional = false
 
     [install.distributionchoice]
     ask.en = "Which OS distribution do you want to choose, for instance: bullseye, bookworm, etc."
     type = "string"
     default = "bullseye"
-    optional = "false"
+    optional = false
 
     [install.ynhbranch]
     ask.en = "Which YNH branch do you want to choose, for instance: stable, testing, etc."
     type = "string"
     default = "stable"
-    optional = "false"
+    optional = false
 
 [resources]
     [resources.system_user]
