@@ -57,11 +57,9 @@ ram.runtime = "50M"
     default = "https://github.com/YunoHost/apps"
 
     [install.executor]
-    ask.en = "Who should be able to use the testing commands in the repo?"
-    type = "select"
-    choices.me = "Only the repository owner"
-    choices.everyone = "Anyone within the repository"
-    default = "me"
+    ask.en = "Who should be able to use the testing commands in the repo? Leave blank if anyone, or insert your github username"
+    type = "string"
+    default = ""
 
     [install.publicdir]
     ask.en = "If this is a local service that you will be exposing through a different domain, provide the public domain/path for the app here"
