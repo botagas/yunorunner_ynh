@@ -1,0 +1,6 @@
+--- run.py.old	2025-01-10
++++ run.py	2025-01-10
+@@ -120,2 +127,2 @@
+     badge_url = app.config.BASE_URL + app.url_for("api_badge_job", job_id=job.id)
+-    summary_url = app.config.BASE_URL + "/summary/" + str(job.id) + ".png"
++    summary_url = app.config.BASE_PUBLIC_URL + "/summary/" + str(job.id) + ".png"
