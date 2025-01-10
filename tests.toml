@@ -7,6 +7,13 @@ test_format = 1.0
     args.context = "personal_ci"
     args.mode = "manual"
     args.cluster = false
+    args.appsrepo = "https://github.com/YunoHost/apps"
+    args.executor = "test"
+    args.publicdir = "https://github.com/YunoHost/apps"
+    args.githubtoken = "test"
+    args.webhooksecret = "test"
+    args.distributionchoice = "bullseye"
+    args.ynhbranch = "stable"
 
     # ------------
     # Tests to run
