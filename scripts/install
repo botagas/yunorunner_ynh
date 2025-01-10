@@ -135,15 +135,9 @@ ynh_replace \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Replace "ci-auto-update-" with app.config.EXECUTOR
+# Remove the branch ref validation entirely, including the trailing `):`
 ynh_replace \
-    --match="\"ci-auto-update-\"" \
-    --replace="" \
-    --file="/var/www/yunorunner/yunorunner/run.py"
-
-# Remove branch ref validation entirely
-ynh_replace \
-    --match='] or not hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\(.*\):' \
+    --match='] or not hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\([^)]*\)\s*:' \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
