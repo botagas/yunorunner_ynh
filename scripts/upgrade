@@ -154,6 +154,62 @@ yunohost service add "$app" --description="$app daemon for YunoRunner"
 ynh_add_config --template="cron" --destination="/etc/cron.d/$app"
 
 #=================================================
+# APPLY PATCHES
+#=================================================
+ynh_script_progression "Applying patches to Python scripts..."
+
+# Replace BASE_URL with BASE_PUBLIC_URL
+ynh_replace \
+    --match="ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --replace="ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match="badge_url = app.config.BASE_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
+    --replace="badge_url = app.config.BASE_PUBLIC_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match="summary_url = app.config.BASE_URL + f\"/summary/{job.id}.png\"" \
+    --replace="summary_url = app.config.BASE_PUBLIC_URL + f\"/summary/{job.id}.png\"" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Add new config variables to default_config
+ynh_replace \
+    --match="\"BASE_URL\": \"\"," \
+    --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace hardcoded repo URL
+ynh_replace \
+    --match="\"https://github.com/YunoHost/apps\"" \
+    --replace="app.config.APPSREPO" \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+
+# Replace YunoHost-Apps with app.config.EXECUTOR
+ynh_replace \
+    --match="\"https://github.com/YunoHost-Apps/%s_ynh\"" \
+    --replace="f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\"" \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+# Replace "github-actions[bot]" with app.config.EXECUTOR
+ynh_replace \
+    --match="\"github-actions\[bot\]\",\s*" \
+    --replace="app.config.EXECUTOR, " \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Remove "yunohost-bot"
+ynh_replace \
+    --match="\[\"yunohost-bot\"\]" \
+    --replace="[]" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace "ci-auto-update-" with app.config.EXECUTOR
+ynh_replace \
+    --match="\"ci-auto-update-\"" \
+    --replace="app.config.EXECUTOR" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+#=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
