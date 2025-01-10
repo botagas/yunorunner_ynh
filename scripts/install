@@ -81,40 +81,22 @@ run_py="$install_dir/yunorunner/run.py"
 
 # Replace BASE_URL with BASE_PUBLIC_URL for specific URLs if publicdir is provided
 if [[ -n "$publicdir" ]]; then
-    ynh_replace \
-        --match="badge_url = app.config.BASE_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
-        --replace="badge_url = app.config.BASE_PUBLIC_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
-        --file="$run_py"
+    ynh_replace --match="badge_url = app.config.BASE_URL + app.url_for(\"api_badge_job\", job_id=job.id)" --replace="badge_url = app.config.BASE_PUBLIC_URL + app.url_for(\"api_badge_job\", job_id=job.id)" --file="$run_py"
 
-    ynh_replace \
-        --match="summary_url = app.config.BASE_URL + \"/summary/\" + str(job.id) + \".png\"" \
-        --replace="summary_url = app.config.BASE_PUBLIC_URL + \"/summary/\" + str(job.id) + \".png\"" \
-        --file="$run_py"
+    ynh_replace --match="summary_url = app.config.BASE_URL + \"/summary/\" + str(job.id) + \".png\"" --replace="summary_url = app.config.BASE_PUBLIC_URL + \"/summary/\" + str(job.id) + \".png\"" --file="$run_py"
 fi
 
 # Replace executor validation logic
-ynh_replace \
-    --match="if hook_infos\[\"pull_request\"\]\[\"user\"\]\[\"login\"\] not in \[.*\]" \
-    --replace="valid_user = (app.config.EXECUTOR == \"\" or hook_infos[\"pull_request\"][\"user\"][\"login\"] == app.config.EXECUTOR)" \
-    --file="$run_py"
+ynh_replace --match="if hook_infos\[\"pull_request\"\]\[\"user\"\]\[\"login\"\] not in \[.*\]" --replace="valid_user = (app.config.EXECUTOR == \"\" or hook_infos[\"pull_request\"][\"user\"][\"login\"] == app.config.EXECUTOR)" --file="$run_py"
 
 # Replace ref validation logic
-ynh_replace \
-    --match="or not hook_infos\[\"pull_request\"\]\[\"head\"\]\[\"ref\"\]\.startswith\(.*\)" \
-    --replace="valid_ref = hook_infos[\"pull_request\"][\"head\"][\"ref\"].startswith(\"ci-auto-update-\")\n\n    if not valid_user or not valid_ref:" \
-    --file="$run_py"
+ynh_replace --match="or not hook_infos\[\"pull_request\"\]\[\"head\"\]\[\"ref\"\]\.startswith\(.*\)" --replace="valid_ref = hook_infos[\"pull_request\"][\"head\"][\"ref\"].startswith(\"ci-auto-update-\")\n\n    if not valid_user or not valid_ref:" --file="$run_py"
 
 # Replace debug message for unauthorized PRs
-ynh_replace \
-    --match="api_logger\.debug\(\"Received a pull_request webhook but from an unknown github user\." \
-    --replace="api_logger.debug(\"Received a pull_request webhook but from an unauthorized user or invalid ref.\")" \
-    --file="$run_py"
+ynh_replace --match="api_logger\.debug\(\"Received a pull_request webhook but from an unknown github user\." --replace="api_logger.debug(\"Received a pull_request webhook but from an unauthorized user or invalid ref.\")" --file="$run_py"
 
 # Add new config defaults
-ynh_replace \
-    --match="def set_config(config=.*\n.*default_config = {" \
-    --replace="def set_config(config=.*\n.*default_config = {\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
-    --file="$run_py"
+ynh_replace --match="def set_config(config=.*\n.*default_config = {" --replace="def set_config(config=.*\n.*default_config = {\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," --file="$run_py"
 
 #=================================================
 # MODIFY TEST_CATALOG.PY
@@ -127,21 +109,12 @@ test_catalog_py="$install_dir/package_check/package_linter/tests/test_catalog.py
 ynh_replace --match="^" --replace="from yunorunner.config import *\n" --file="$test_catalog_py"
 
 # Modify _fetch_app_repo to use APPSREPO
-ynh_replace \
-    --match="https://github.com/YunoHost/apps" \
-    --replace="app.config.APPSREPO" \
-    --file="$test_catalog_py"
+ynh_replace --match="https://github.com/YunoHost/apps" --replace="app.config.APPSREPO" --file="$test_catalog_py"
 
 # Modify is_in_github_org to use EXECUTOR dynamically
-ynh_replace \
-    --match="repo_org = .+YunoHost-Apps" \
-    --replace="repo_org = f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\" % (self.app_id)" \
-    --file="$test_catalog_py"
+ynh_replace --match="repo_org = .+YunoHost-Apps" --replace="repo_org = f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\" % (self.app_id)" --file="$test_catalog_py"
 
-ynh_replace \
-    --match="repo_brique = .+labriqueinternet" \
-    --replace="repo_brique = f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\" % (self.app_id)" \
-    --file="$test_catalog_py"
+ynh_replace --match="repo_brique = .+labriqueinternet" --replace="repo_brique = f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\" % (self.app_id)" --file="$test_catalog_py"
 
 pip install --break-system-packages imgkit
 
