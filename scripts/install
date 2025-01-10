@@ -86,14 +86,6 @@ ynh_config_add_systemd
 yunohost service add "$app" --description="$app daemon for YunoRunner"
 
 #=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_script_progression "Starting $app's systemd service..."
-
-# Start a systemd service
-ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
-
-#=================================================
 # APPLY PATCHES
 #=================================================
 ynh_script_progression "Applying patches to Python scripts..."
@@ -148,6 +140,14 @@ ynh_replace \
     --match="\"ci-auto-update-\"" \
     --replace="app.config.EXECUTOR" \
     --file="/var/www/yunorunner/yunorunner/run.py"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+# Start a systemd service
+ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
 
 #=================================================
 # FINISH INSTALLATION
