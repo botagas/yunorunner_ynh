@@ -11,8 +11,8 @@ source /usr/share/yunohost/helpers
 # DEFINE WORKING DIRECTORY
 #=================================================
 
-# Use $PWD to reference the current working directory
-working_dir="$PWD"
+# Use $PWD to get the current directory, adjust to parent directory
+working_dir="$(dirname "$PWD")"
 
 #=================================================
 # INSTALL INCUS
