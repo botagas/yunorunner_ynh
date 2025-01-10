@@ -135,11 +135,12 @@ ynh_replace \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Remove the branch ref validation entirely, including the trailing `):`
+# Remove block for ci-auto-update-
 ynh_replace \
-    --match='] or not hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\([^)]*\)\s*:' \
+    --match="] or not hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\([^)]*\):" \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
+
 
 #=================================================
 # START SYSTEMD SERVICE
