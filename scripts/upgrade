@@ -109,6 +109,7 @@ ynh_script_progression "Upgrading source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
+_git_clone_or_pull "$install_dir/package_check/package_linter" https://github.com/YunoHost/package_linter
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:$app" "$install_dir"
