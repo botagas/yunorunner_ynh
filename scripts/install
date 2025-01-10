@@ -126,7 +126,7 @@ ynh_replace \
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
     --match="\"github-actions\[bot\]\",\s*" \
-    --replace="app.config.EXECUTOR, " \
+    --replace="app.config.EXECUTOR" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 # Remove "yunohost-bot"
