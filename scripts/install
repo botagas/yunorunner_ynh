@@ -143,10 +143,9 @@ ynh_replace \
 
 # Replace the GitHub API membership check with an immediate return 204
 ynh_replace \
-    --match="f\"https://api.github.com/orgs/YunoHost-Apps/members/\\{user\\}\"," \
-    --replace="return resp.status == 204" \
+    --match=$'f"https://api.github.com/orgs/YunoHost-Apps/members/{user},"' \
+    --replace='return resp.status == 204' \
     --file="/var/www/yunorunner/yunorunner/run.py"
-
 
 #=================================================
 # START SYSTEMD SERVICE
