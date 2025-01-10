@@ -18,10 +18,10 @@ if ynh_exec_warn_less yunohost service status "$app" >/dev/null; then
 fi
 
 # Remove the dedicated systemd config
-ynh_remove_systemd_config
+ynh_config_remove_systemd
 
 # Remove the dedicated NGINX config
-ynh_remove_nginx_config
+ynh_config_remove_nginx
 
 # Remove Incus
 yunohost app remove incus
