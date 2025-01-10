@@ -22,6 +22,11 @@ Yunorunner is a CI server for YunoHost apps.
 
 It is based on Incus / LXC and uses [package_check](https://github.com/YunoHost/package_check).
 
+This package allows you to self-host a yunorunner instance with the ability to also use it in your own github repositories. The process is:
+- Create a github personal access token in github developer settings and grant it these permissions: read metadata, read/write to commit statuses and pull requests
+- Clone YunoHost/apps or add a apps.toml file in your repo with necessary details (example in apps.toml of YunoHost/apps.toml)
+- Install the app and provide the token, select domain, add the repo for apps.toml
+- Create a webhook in github that points to https://example.tld/github, make it trigger on "Issue Comment" and "Pull Request"
 
 **Shipped version:** 2024.12.10~ynh1
 
