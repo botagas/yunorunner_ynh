@@ -131,7 +131,7 @@ ynh_replace \
 
 # Remove "yunohost-bot"
 ynh_replace \
-    --match="\"yunohost-bot\",\" \
+    --match="\"yunohost-bot\"" \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
