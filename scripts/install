@@ -153,10 +153,10 @@ ynh_replace \
     --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-ynh_replace \
-    --match=$'({shield_badge_url})]({job_url})' \
-    --replace=$'({shield_badge_url})]({public_url})' \
-    --file="/var/www/yunorunner/yunorunner/run.py"
+# ynh_replace \
+#     --match=$'({shield_badge_url})]({job_url})' \
+#     --replace=$'({shield_badge_url})]({public_url})' \
+#     --file="/var/www/yunorunner/yunorunner/run.py"
 
 ynh_replace \
     --match=$'({summary_url})]({job_url})' \
