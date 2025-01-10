@@ -84,16 +84,57 @@ chown "$app:$app" "$install_dir/yunorunner/config.py"
 #=================================================
 ynh_script_progression "Applying patches to Python scripts..."
 
-# Apply base patch to run.py
-patch -u "$install_dir/yunorunner/run.py" < "$working_dir/run_base.patch"
+# Replace BASE_URL with BASE_PUBLIC_URL
+ynh_replace \
+    --match="ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --replace="ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Conditionally apply publicdir patch to run.py
-if [[ -n "$publicdir" ]]; then
-    patch -u "$install_dir/yunorunner/run.py" < "$working_dir/run_publicdir.patch"
-fi
+ynh_replace \
+    --match="badge_url = app.config.BASE_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
+    --replace="badge_url = app.config.BASE_PUBLIC_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Apply patch to test_catalog.py
-patch -u "$install_dir/package_check/package_linter/tests/test_catalog.py" < "$working_dir/test_catalog.patch"
+ynh_replace \
+    --match="summary_url = app.config.BASE_URL + f\"/summary/{job.id}.png\"" \
+    --replace="summary_url = app.config.BASE_PUBLIC_URL + f\"/summary/{job.id}.png\"" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Add new config variables to default_config
+ynh_replace \
+    --match="\"BASE_URL\": \"\"," \
+    --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace hardcoded repo URL
+ynh_replace \
+    --match="\"https://github.com/YunoHost/apps\"" \
+    --replace="app.config.APPSREPO" \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+
+# Replace YunoHost-Apps with app.config.EXECUTOR
+ynh_replace \
+    --match="\"https://github.com/YunoHost-Apps/%s_ynh\"" \
+    --replace="f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\"" \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+# Replace "github-actions[bot]" with app.config.EXECUTOR
+ynh_replace \
+    --match="\"github-actions\[bot\]\"" \
+    --replace="app.config.EXECUTOR" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Remove "yunohost-bot"
+ynh_replace \
+    --match=",\s*\"yunohost-bot\"" \
+    --replace="" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace "ci-auto-update-" with app.config.EXECUTOR
+ynh_replace \
+    --match="\"ci-auto-update-\"" \
+    --replace="app.config.EXECUTOR" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
 
 #=================================================
 # ADD SYSTEM CONFIGURATION
