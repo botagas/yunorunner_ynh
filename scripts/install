@@ -8,20 +8,27 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
+# DEFINE WORKING DIRECTORY
+#=================================================
+
+# Use $PWD to reference the current working directory
+working_dir="$PWD"
+
+#=================================================
 # INSTALL INCUS
 #=================================================
-ynh_script_progression --message="Installing Incus... (this may take a long time!)"
+ynh_script_progression "Installing Incus... (this may take a long time!)"
 
-# if ! yunohost app list --output-as json --quiet | jq -e '.apps[] | select(.id == "incus")' >/dev/null; then
-#     yunohost app install --force https://github.com/YunoHost-Apps/incus_ynh
-# fi
+if ! yunohost app list --output-as json --quiet | jq -e '.apps[] | select(.id == "incus")' >/dev/null; then
+    yunohost app install --force https://github.com/YunoHost-Apps/incus_ynh
+fi
 
 setup_incus
 
 #=================================================
 # DOWNLOAD, CHECK, AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression "Setting up source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
@@ -36,7 +43,7 @@ chown -R "$app:www-data" "$install_dir/yunorunner/results"
 #=================================================
 # INSTALL PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing Python dependencies..."
+ynh_script_progression "Installing Python dependencies..."
 
 pushd "$install_dir"
     python3 -m venv venv
@@ -45,14 +52,11 @@ pushd "$install_dir"
     # package_check dep not in apt
     venv/bin/pip install imgkit
 popd
-mv "./run_base.patch" "$install_dir/run_base.patch"
-mv "./run_publicdir.patch" "$install_dir/run_publicdir.patch"
-mv "./test_catalog.patch" "$install_dir/test_catalog.patch"
 
 #=================================================
 # CREATE AND CONFIGURE CONFIG.PY
 #=================================================
-ynh_script_progression --message="Configuring YunoRunner settings..."
+ynh_script_progression "Configuring YunoRunner settings..."
 
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
@@ -78,23 +82,23 @@ chown "$app:$app" "$install_dir/yunorunner/config.py"
 #=================================================
 # APPLY PATCHES
 #=================================================
-ynh_script_progression --message="Applying patches to Python scripts..."
+ynh_script_progression "Applying patches to Python scripts..."
 
 # Apply base patch to run.py
-sudo patch -u "$install_dir/yunorunner/run.py" < "$install_dir/run_base.patch"
+patch -u "$install_dir/yunorunner/run.py" < "$working_dir/run_base.patch"
 
 # Conditionally apply publicdir patch to run.py
 if [[ -n "$publicdir" ]]; then
-    sudo patch -u "$install_dir/yunorunner/run.py" < "$install_dir/run_publicdir.patch"
+    patch -u "$install_dir/yunorunner/run.py" < "$working_dir/run_publicdir.patch"
 fi
 
 # Apply patch to test_catalog.py
-sudo patch -u "$install_dir/package_check/package_linter/tests/test_catalog.py" < "$install_dir/test_catalog.patch"
+patch -u "$install_dir/package_check/package_linter/tests/test_catalog.py" < "$working_dir/test_catalog.patch"
 
 #=================================================
 # ADD SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding system configurations related to $app..."
+ynh_script_progression "Adding system configurations related to $app..."
 
 # Create a dedicated NGINX config
 ynh_config_add_nginx
@@ -106,7 +110,7 @@ yunohost service add "$app" --description="$app daemon for YunoRunner"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting $app's systemd service..."
+ynh_script_progression "Starting $app's systemd service..."
 
 # Start a systemd service
 ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
@@ -114,4 +118,4 @@ ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=3
 #=================================================
 # FINISH INSTALLATION
 #=================================================
-ynh_script_progression --message="Installation of $app completed!"
+ynh_script_progression "Installation of $app completed!"
