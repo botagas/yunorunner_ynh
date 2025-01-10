@@ -141,8 +141,9 @@ ynh_replace \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
+# Remove branch ref validation entirely
 ynh_replace \
-    --match="or not hook_infos\[\"pull_request\"\]\[\"head\"\]\[\"ref\"\]\.startswith\(.*\)" \
+    --match='\]\s*or\s*not\s*hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\(.*\):' \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
