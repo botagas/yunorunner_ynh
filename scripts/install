@@ -125,14 +125,14 @@ ynh_replace \
     --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
-    --match="\"github-actions\[bot\]\"" \
-    --replace="app.config.EXECUTOR" \
+    --match="\"github-actions\[bot\]\",\s*" \
+    --replace="app.config.EXECUTOR, " \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 # Remove "yunohost-bot"
 ynh_replace \
-    --match=",\s*\"yunohost-bot\"" \
-    --replace="" \
+    --match="\[\"yunohost-bot\"\]" \
+    --replace="[]" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 # Replace "ci-auto-update-" with app.config.EXECUTOR
