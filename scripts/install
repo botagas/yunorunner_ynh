@@ -12,9 +12,9 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Installing Incus... (this may take a long time!)"
 
-if ! yunohost app list --output-as json --quiet | jq -e '.apps[] | select(.id == "incus")' >/dev/null; then
-    yunohost app install --force https://github.com/YunoHost-Apps/incus_ynh
-fi
+# if ! yunohost app list --output-as json --quiet | jq -e '.apps[] | select(.id == "incus")' >/dev/null; then
+#     yunohost app install --force https://github.com/YunoHost-Apps/incus_ynh
+# fi
 
 setup_incus
 
