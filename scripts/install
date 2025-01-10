@@ -155,7 +155,7 @@ ynh_replace \
 
 ynh_replace \
     --match=$')]({job_url})' \
-    --replace=$')]({job_url})' \
+    --replace=$')]({public_url})' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 #=================================================
