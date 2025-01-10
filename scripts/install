@@ -154,8 +154,8 @@ ynh_replace \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 ynh_replace \
-    --match='body = f"{catchphrase}\\n\[!\[Test Badge\]\(\{shield_badge_url\}\)\]\(\{job_url\}\)\\n\[!\[\]\(\{summary_url\}\)\]\(\{job_url\}\)"' \
-    --replace='body = f"{catchphrase}\\n\[!\[Test Badge\]\(\{shield_badge_url\}\)\]\(\{public_url\}\)\\n\[!\[\]\(\{summary_url\}\)\]\(\{public_url\}\)"' \
+    --match='\)\]\(\{job_url\}\)' \
+    --replace=')](\{public_url\})' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 #=================================================
