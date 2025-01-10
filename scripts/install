@@ -147,6 +147,17 @@ ynh_replace \
     --replace='f"https://api.github.com/orgs/YunoHost-Apps/members/tituspijean",' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
+# Replace job_url in body statement with public_url
+ynh_replace \
+    --match='job_url = app.config.BASE_URL \+ app.url_for\("html_job", job_id=job.id\)' \
+    --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match='body = f"{catchphrase}\\n\[!\[Test Badge\]\(\{shield_badge_url\}\)\]\(\{job_url\}\)\\n\[!\[\]\(\{summary_url\}\)\]\(\{job_url\}\)"' \
+    --replace='body = f"{catchphrase}\\n[![Test Badge]({shield_badge_url})]({public_url})\\n[![]({summary_url})]({public_url})"' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
