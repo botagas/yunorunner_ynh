@@ -25,10 +25,10 @@ ynh_systemctl --service="$app" --action="stop" --log_path="systemd"
 #=================================================
 ynh_script_progression "Ensuring downward compatibility..."
 
-if [ ! -d "$install_dir/yunorunner/" ]; then
-    mkdir -p "$install_dir/yunorunner/"
-    mv .git maintenance results static templates .gitignore ciclic models README.md requirements.txt requirements-frozen.txt run.py schedule.py "$install_dir/yunorunner/"
-fi
+# if [ ! -d "$install_dir/yunorunner/" ]; then
+#     mkdir -p "$install_dir/yunorunner/"
+#     mv .git maintenance results static templates .gitignore ciclic models README.md requirements.txt requirements-frozen.txt run.py schedule.py "$install_dir/yunorunner/"
+# fi
 
 # Close a legacy port
 if yunohost firewall list | grep -q "\- $port$"; then
