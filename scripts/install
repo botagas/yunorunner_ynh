@@ -114,14 +114,14 @@ ynh_replace \
 
 # Replace hardcoded repo URL
 ynh_replace \
-    --match="\"https://github.com/YunoHost/apps\"" \
+    --match="https://github.com/YunoHost/apps" \
     --replace="app.config.APPSREPO" \
     --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
 
 # Replace YunoHost-Apps with app.config.EXECUTOR
 ynh_replace \
-    --match="\"https://github.com/YunoHost-Apps/%s_ynh\"" \
-    --replace="f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\"" \
+    --match="https://github.com/YunoHost-Apps"" \
+    --replace="https://github.com/{app.config.EXECUTOR}" \
     --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
