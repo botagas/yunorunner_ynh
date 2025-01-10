@@ -131,7 +131,7 @@ ynh_replace \
 
 # Remove "yunohost-bot"
 ynh_replace \
-    --match="\"yunohost-bot\"" \
+    --match="\"yunohost-bot\",\s*" \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
@@ -143,7 +143,7 @@ ynh_replace \
 
 # Remove branch ref validation entirely
 ynh_replace \
-    --match='\]\s*or\s*not\s*hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\(.*\):' \
+    --match='] or not hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\(.*\):' \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
