@@ -10,7 +10,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # INSTALL INCUS
 #=================================================
-ynh_script_progression --message="Installing Incus... (this may take a long time!)"
+ynh_script_progression "Installing Incus... (this may take a long time!)"
 
 if ! yunohost app list --output-as json --quiet | jq -e '.apps[] | select(.id == "incus")' >/dev/null; then
     yunohost app install --force https://github.com/YunoHost-Apps/incus_ynh
@@ -21,10 +21,11 @@ setup_incus
 #=================================================
 # DOWNLOAD, CHECK, AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression "Setting up source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
+_git_clone_or_pull "$install_dir/package_check/package_linter" https://github.com/YunoHost/package_linter
 
 chown "$app:$app" "$install_dir"
 
@@ -36,7 +37,7 @@ chown -R "$app:www-data" "$install_dir/yunorunner/results"
 #=================================================
 # INSTALL PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing Python dependencies..."
+ynh_script_progression "Installing Python dependencies..."
 
 pushd "$install_dir"
     python3 -m venv venv
@@ -49,7 +50,7 @@ popd
 #=================================================
 # CREATE AND CONFIGURE CONFIG.PY
 #=================================================
-ynh_script_progression --message="Configuring YunoRunner settings..."
+ynh_script_progression "Configuring YunoRunner settings..."
 
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
@@ -73,99 +74,88 @@ chmod 400 "$install_dir/yunorunner/config.py"
 chown "$app:$app" "$install_dir/yunorunner/config.py"
 
 #=================================================
-# MODIFY RUN.PY
-#=================================================
-ynh_script_progression --message="Updating run.py for custom configuration..."
-
-run_py="$install_dir/yunorunner/run.py"
-
-# Replace BASE_URL with BASE_PUBLIC_URL for specific URLs if publicdir is provided
-if [[ -n "$publicdir" ]]; then
-    ynh_replace \
-        --match="badge_url = app.config.BASE_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
-        --replace="badge_url = app.config.BASE_PUBLIC_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
-        --file="$run_py"
-
-    ynh_replace \
-        --match="summary_url = app.config.BASE_URL + \"/summary/\" + str(job.id) + \".png\"" \
-        --replace="summary_url = app.config.BASE_PUBLIC_URL + \"/summary/\" + str(job.id) + \".png\"" \
-        --file="$run_py"
-fi
-
-# Replace executor validation logic
-ynh_replace \
-    --match="if hook_infos\[\"pull_request\"\]\[\"user\"\]\[\"login\"\] not in \[.*\]" \
-    --replace="valid_user = (app.config.EXECUTOR == \"\" or hook_infos[\"pull_request\"][\"user\"][\"login\"] == app.config.EXECUTOR)" \
-    --file="$run_py"
-
-# Replace ref validation logic
-ynh_replace \
-    --match="or not hook_infos\[\"pull_request\"\]\[\"head\"\]\[\"ref\"\]\.startswith\(.*\)" \
-    --replace="valid_ref = hook_infos[\"pull_request\"][\"head\"][\"ref\"].startswith(\"ci-auto-update-\")\n\n    if not valid_user or not valid_ref:" \
-    --file="$run_py"
-
-# Replace debug message for unauthorized PRs
-ynh_replace \
-    --match="api_logger\.debug\(\"Received a pull_request webhook but from an unknown github user\." \
-    --replace="api_logger.debug(\"Received a pull_request webhook but from an unauthorized user or invalid ref.\")" \
-    --file="$run_py"
-
-# Add new config defaults
-ynh_replace \
-    --match="def set_config(config=.*\n.*default_config = {" \
-    --replace="def set_config(config=.*\n.*default_config = {\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
-    --file="$run_py"
-
-#=================================================
-# MODIFY TEST_CATALOG.PY
-#=================================================
-ynh_script_progression --message="Updating test_catalog.py for custom configuration..."
-
-test_catalog_py="$install_dir/package_check/package_linter/tests/test_catalog.py"
-
-# Add config import
-ynh_replace --match="^" --replace="from yunorunner.config import *\n" --file="$test_catalog_py"
-
-# Modify _fetch_app_repo to use APPSREPO
-ynh_replace \
-    --match="https://github.com/YunoHost/apps" \
-    --replace="app.config.APPSREPO" \
-    --file="$test_catalog_py"
-
-# Modify is_in_github_org to use EXECUTOR dynamically
-ynh_replace \
-    --match="repo_org = .+YunoHost-Apps" \
-    --replace="repo_org = f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\" % (self.app_id)" \
-    --file="$test_catalog_py"
-
-ynh_replace \
-    --match="repo_brique = .+labriqueinternet" \
-    --replace="repo_brique = f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\" % (self.app_id)" \
-    --file="$test_catalog_py"
-
-pip install --break-system-packages imgkit
-
-#=================================================
 # ADD SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding system configurations related to $app..."
+ynh_script_progression "Adding system configurations related to $app..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 yunohost service add "$app" --description="$app daemon for YunoRunner"
+
+#=================================================
+# APPLY PATCHES
+#=================================================
+ynh_script_progression "Applying patches to Python scripts..."
+
+# Replace BASE_URL with BASE_PUBLIC_URL
+ynh_replace \
+    --match="ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --replace="ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match="badge_url = app.config.BASE_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
+    --replace="badge_url = app.config.BASE_PUBLIC_URL + app.url_for(\"api_badge_job\", job_id=job.id)" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match="summary_url = app.config.BASE_URL + f\"/summary/{job.id}.png\"" \
+    --replace="summary_url = app.config.BASE_PUBLIC_URL + f\"/summary/{job.id}.png\"" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Add new config variables to default_config
+ynh_replace \
+    --match="\"BASE_URL\": \"\"," \
+    --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace hardcoded repo URL
+ynh_replace \
+    --match="\"https://github.com/YunoHost/apps\"" \
+    --replace="app.config.APPSREPO" \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+
+# Replace YunoHost-Apps with app.config.EXECUTOR
+ynh_replace \
+    --match="\"https://github.com/YunoHost-Apps/%s_ynh\"" \
+    --replace="f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\"" \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+# Replace "github-actions[bot]" with app.config.EXECUTOR
+ynh_replace \
+    --match="\"github-actions\[bot\]\",\s*" \
+    --replace="app.config.EXECUTOR," \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Remove "yunohost-bot"
+ynh_replace \
+    --match="\"yunohost-bot\",\s*" \
+    --replace="" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace "ci-auto-update-" with an empty string
+ynh_replace \
+    --match="\"ci-auto-update-"\" \
+    --replace='""' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace the GitHub API membership check with an immediate return 204
+ynh_replace \
+    --match=$'f"https://api.github.com/orgs/YunoHost-Apps/members/{user}",' \
+    --replace='f"https://api.github.com/orgs/YunoHost-Apps/members/tituspijean",' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting $app's systemd service..."
+ynh_script_progression "Starting $app's systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name="$app" --action="start" --log_path="systemd" --timeout=30
+ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
 
 #=================================================
 # FINISH INSTALLATION
 #=================================================
-ynh_script_progression --message="Installation of $app completed!"
+ynh_script_progression "Installation of $app completed!" --last
