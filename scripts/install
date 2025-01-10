@@ -109,7 +109,7 @@ yunohost service add "$app" --description="$app daemon for YunoRunner"
 ynh_script_progression --message="Starting $app's systemd service..."
 
 # Start a systemd service
-ynh_systemdctl --service="$app" --action="start" --log_path="systemd" --timeout=30
+ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
 
 #=================================================
 # FINISH INSTALLATION
