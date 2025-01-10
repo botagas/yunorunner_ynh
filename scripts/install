@@ -78,15 +78,15 @@ chown "$app:$app" "$install_dir/yunorunner/config.py"
 ynh_script_progression --message="Applying patches to Python scripts..."
 
 # Apply base patch to run.py
-patch -u "$install_dir/yunorunner/run.py" < "$install_dir/patches/run_base.patch"
+sudo patch -u "$install_dir/yunorunner/run.py" < "$install_dir/patches/run_base.patch"
 
 # Conditionally apply publicdir patch to run.py
 if [[ -n "$publicdir" ]]; then
-    patch -u "$install_dir/yunorunner/run.py" < "$install_dir/patches/run_publicdir.patch"
+    sudo patch -u "$install_dir/yunorunner/run.py" < "$install_dir/patches/run_publicdir.patch"
 fi
 
 # Apply patch to test_catalog.py
-patch -u "$install_dir/package_check/package_linter/tests/test_catalog.py" < "$install_dir/patches/test_catalog.patch"
+sudo patch -u "$install_dir/package_check/package_linter/tests/test_catalog.py" < "$install_dir/patches/test_catalog.patch"
 
 #=================================================
 # ADD SYSTEM CONFIGURATION
