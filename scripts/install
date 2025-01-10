@@ -131,14 +131,19 @@ ynh_replace \
 
 # Remove "yunohost-bot"
 ynh_replace \
-    --match="\[\"yunohost-bot\"\]" \
-    --replace="[]" \
+    --match="\"yunohost-bot\",\" \
+    --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 # Replace "ci-auto-update-" with app.config.EXECUTOR
 ynh_replace \
     --match="\"ci-auto-update-\"" \
-    --replace="app.config.EXECUTOR" \
+    --replace="" \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match="or not hook_infos\[\"pull_request\"\]\[\"head\"\]\[\"ref\"\]\.startswith\(.*\)" \
+    --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 #=================================================
