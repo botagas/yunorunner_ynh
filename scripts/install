@@ -143,7 +143,7 @@ ynh_replace \
 
 # Remove the GitHub API organization membership check block
 ynh_replace \
-    --match='\t\t\tresp = await session.get\(\n\t\t\t\tf"https://api.github.com/orgs/YunoHost-Apps/members/\{user\}",\n\t\t\t\)' \
+    --match="\t\t\tresp = await session.get\(\n\t\t\t\tf"https://api.github.com/orgs/YunoHost-Apps/members/\{user\}",\n\t\t\t\)" \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
