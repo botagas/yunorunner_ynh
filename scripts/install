@@ -135,10 +135,10 @@ ynh_replace \
     --replace="" \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Remove block for ci-auto-update-
+# Replace "ci-auto-update-" with an empty string
 ynh_replace \
-    --match="] or not hook_infos\["pull_request"\]\["head"\]\["ref"\]\.startswith\([^)]*\):" \
-    --replace="" \
+    --match='"ci-auto-update-"' \
+    --replace='""' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 
