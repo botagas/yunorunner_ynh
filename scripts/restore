@@ -60,7 +60,7 @@ ynh_script_progression "Restoring system configurations related to $app..." --we
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_restore "/etc/systemd/system/$app.service"
-systemctl enable "$app.service" --quiet
+ynh_systemctl enable "$app.service" --quiet
 yunohost service add "$app" --description="$app daemon for YunoRunner"
 
 ynh_restore "/etc/cron.d/$app"
