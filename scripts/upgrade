@@ -71,14 +71,16 @@ fi
 
 if [ ! -d "$install_dir/package_check" ]; then
     ynh_exec_as "$app" git clone https://github.com/YunoHost/package_check "$install_dir/package_check"
+    ynh_exec_as "$app" git clone https://github.com/YunoHost/package_linter "$install_dir/package_check/package_linter"
+
 fi
 
 # Remove Pythonz
-ynh_secure_remove --file="$install_dir/.pythonz"
+ynh_safe_rm"$install_dir/.pythonz"
 
 # This was moved to incus package
 if [ -f "/etc/yunohost/hooks.d/post_iptable_rules/50-${app}" ]; then
-    ynh_secure_remove --file="/etc/yunohost/hooks.d/post_iptable_rules/50-${app}"
+    ynh_safe_rm"/etc/yunohost/hooks.d/post_iptable_rules/50-${app}"
 fi
 
 #=================================================
