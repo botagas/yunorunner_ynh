@@ -49,7 +49,6 @@ pushd "$install_dir"
 popd
 
 pip install --break-system-packages imgkit
-pip install --break-system-packages aiohttp
 
 #=================================================
 # CREATE AND CONFIGURE CONFIG.PY
@@ -93,6 +92,12 @@ yunohost service add "$app" --description="$app daemon for YunoRunner"
 # APPLY PATCHES
 #=================================================
 ynh_script_progression "Applying patches to Python scripts..."
+
+# Add source
+ynh_replace \
+    --match='^#!/bin/bash' \
+    --replace=$'#!/bin/bash\nsource /var/www/yunorunner/venv/bin/activate' \
+    --file="/var/www/yunorunner/package_check/package_check.sh"
 
 # Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
