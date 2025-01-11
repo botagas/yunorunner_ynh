@@ -120,9 +120,19 @@ ynh_replace \
 
 # Replace YunoHost-Apps with app.config.EXECUTOR
 ynh_replace \
-    --match="\"https://github.com/YunoHost-Apps/%s_ynh\"" \
-    --replace="f\"https://github.com/{app.config.EXECUTOR}/%s_ynh\"" \
+    --match=$'repo_org = f"https://github.com/YunoHost-Apps/%s_ynh" % (self.app_id)' \
+    --replace=$'repo_org = f"https://github.com/{app.config.EXECUTOR}/%s_ynh" % (self.app_id)' \
     --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+ynh_replace \
+    --match=$'if repo_url.lower().startswith("https://github.com/YunoHost-Apps/"):' \
+    --replace=$'if repo_url.lower().startswith("https://github.com/{app.config.EXECUTOR}/"):' \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+# Replace labriqueinternet with app.config.EXECUTOR
+ynh_replace \
+    --match=$'repo_brique = "https://github.com/labriqueinternet/%s_ynh" % (self.app_id)' \
+    --replace=$'repo_brique = "https://github.com/{app.config.EXECUTOR/%s_ynh" % (self.app_id)' \
+    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
     --match="\"github-actions\[bot\]\",\s*" \
