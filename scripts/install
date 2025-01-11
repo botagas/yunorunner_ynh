@@ -95,7 +95,7 @@ ynh_script_progression "Applying patches to Python scripts..."
 
 # Add source
 ynh_replace \
-    --match='^#!/bin/bash' \
+    --match=$'#!/bin/bash' \
     --replace=$'#!/bin/bash\nsource /var/www/yunorunner/venv/bin/activate' \
     --file="/var/www/yunorunner/package_check/package_check.sh"
 
