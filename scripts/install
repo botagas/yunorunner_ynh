@@ -112,12 +112,13 @@ ynh_replace \
     --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Replace the git clone command to include the sed replacements
+# Replace the git clone command to include necessary changes
 common_sh="/var/www/yunorunner/package_check/lib/common.sh"
 ynh_replace \
     --match='git clone --quiet \$git_repository "./package_linter"' \
-    --replace='git clone --quiet $git_repository "./package_linter"\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|"https://github.com/YunoHost/apps"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py' \
+    --replace='git clone --quiet $git_repository "./package_linter"\n    # Replace import sys in test_catalog.py\n    sed -i '"'s|import sys|from sys import path\npath.append("/var/www/yunorunner/yunorunner")\nfrom run import set_config\napp = type(\"App\", (object,), {})()\napp.config = set_config(config=\"/var/www/yunorunner/yunorunner/config.py\")|'"' ./package_linter/tests/test_catalog.py\n    # Apply other replacements\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|"https://github.com/YunoHost/apps"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py' \
     --file="$common_sh"
+
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
