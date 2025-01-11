@@ -46,6 +46,7 @@ pushd "$install_dir"
     venv/bin/pip install -r package_check/requirements.txt
     # package_check dep not in apt
     venv/bin/pip install imgkit
+    venv/bin/pip install jsonschema
 popd
 
 pip install --break-system-packages imgkit
