@@ -58,8 +58,8 @@ ynh_script_progression "Configuring YunoRunner settings..."
 
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
-BASE_PUBLIC_URL = "${publicdir:-}"
-EXECUTOR = "${executor:-}"
+BASE_PUBLIC_URL = "$publicdir"
+EXECUTOR = "$executor"
 APPSREPO = "$appsrepo"
 PORT = 8095
 MONITOR_APPS_LIST = False
@@ -132,7 +132,7 @@ ynh_replace \
 # Step 2: Replace the placeholder with the actual code
 ynh_replace \
     --match='# IMPORT_SYS_PLACEHOLDER' \
-    --replace=$'sed -i \'s|import sys|import sys\\\\nfrom sys import path\\\\npath.append("/var/www/yunorunner/yunorunner")\\\\nfrom run import set_config\\\\napp = type("App", (object,), {})()\\\\napp.config = set_config(config="/var/www/yunorunner/yunorunner/config.py")|\' ./package_linter/tests/test_catalog.py' \
+    --replace=$'sed -i \'1 i from sys import path\\\\npath.append("/var/www/yunorunner/yunorunner")\\\\n\\\\n# Load variables directly from config.py\\\\nconfig = {}\\\\nexec(open("/var/www/yunorunner/yunorunner/config.py").read(), config)\\\\n\\\\n# Initialize app and assign config\\\\napp = type("App", (object,), {})()\\\\napp.config = config\\\\n\' ./package_linter/tests/test_catalog.py' \
     --file="$common_sh"
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
