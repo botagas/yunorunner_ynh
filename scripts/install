@@ -112,26 +112,12 @@ ynh_replace \
     --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Replace hardcoded repo URL
+# Replace the git clone command to include the sed replacements
+common_sh="/var/www/yunorunner/package_check/lib/common.sh"
 ynh_replace \
-    --match=$'https://github.com/YunoHost/apps' \
-    --replace=$'app.config.APPSREPO' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
-
-# Replace YunoHost-Apps with app.config.EXECUTOR
-ynh_replace \
-    --match=$'https://github.com/YunoHost-Apps/%s_ynh' \
-    --replace=$'https://github.com/{app.config.EXECUTOR}/%s_ynh' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
-ynh_replace \
-    --match=$'startswith("https://github.com/YunoHost-Apps/' \
-    --replace=$'startswith("https://github.com/{app.config.EXECUTOR}/' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
-# Replace labriqueinternet with app.config.EXECUTOR
-ynh_replace \
-    --match=$'repo_brique = "https://github.com/labriqueinternet/%s_ynh" % (self.app_id)' \
-    --replace=$'repo_brique = "https://github.com/{app.config.EXECUTOR/%s_ynh" % (self.app_id)' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+    --match='git clone --quiet \$git_repository "./package_linter"' \
+    --replace='git clone --quiet $git_repository "./package_linter"\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|"https://github.com/YunoHost/apps"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py' \
+    --file="$common_sh"
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
