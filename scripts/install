@@ -43,9 +43,13 @@ pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install -r yunorunner/requirements.txt
+    venv/bin/pip install -r package_check/requirements.txt
     # package_check dep not in apt
     venv/bin/pip install imgkit
 popd
+
+pip install --break-system-packages imgkit
+pip install --break-system-packages aiohttp
 
 #=================================================
 # CREATE AND CONFIGURE CONFIG.PY
