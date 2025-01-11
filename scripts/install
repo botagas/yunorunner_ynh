@@ -122,7 +122,7 @@ ynh_replace \
 # Step 2: Replace the placeholder with the actual code
 ynh_replace \
     --match='# IMPORT_SYS_PLACEHOLDER' \
-    --replace=$'sed -i \'s|import sys|from sys import path\\\\npath.append("/var/www/yunorunner/yunorunner")\\\\nfrom run import set_config\\\\napp = type("App", (object,), {})()\\\\napp.config = set_config(config="/var/www/yunorunner/yunorunner/config.py")|\' ./package_linter/tests/test_catalog.py' \
+    --replace=$'sed -i \'s|import sys|import sys\\\\nfrom sys import path\\\\npath.append("/var/www/yunorunner/yunorunner")\\\\nfrom run import set_config\\\\napp = type("App", (object,), {})()\\\\napp.config = set_config(config="/var/www/yunorunner/yunorunner/config.py")|\' ./package_linter/tests/test_catalog.py' \
     --file="$common_sh"
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
