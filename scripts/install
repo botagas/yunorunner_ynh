@@ -120,12 +120,12 @@ ynh_replace \
 
 # Replace YunoHost-Apps with app.config.EXECUTOR
 ynh_replace \
-    --match=$'repo_org = f"https://github.com/YunoHost-Apps/%s_ynh" % (self.app_id)' \
-    --replace=$'repo_org = f"https://github.com/{app.config.EXECUTOR}/%s_ynh" % (self.app_id)' \
+    --match=$'https://github.com/YunoHost-Apps/%s_ynh' \
+    --replace=$'https://github.com/{app.config.EXECUTOR}/%s_ynh' \
     --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
 ynh_replace \
-    --match=$'if repo_url.lower().startswith("https://github.com/YunoHost-Apps/"):' \
-    --replace=$'if repo_url.lower().startswith("https://github.com/{app.config.EXECUTOR}/"):' \
+    --match=$'startswith("https://github.com/YunoHost-Apps/' \
+    --replace=$'startswith("https://github.com/{app.config.EXECUTOR}/' \
     --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
 # Replace labriqueinternet with app.config.EXECUTOR
 ynh_replace \
