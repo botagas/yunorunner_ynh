@@ -49,8 +49,6 @@ pushd "$install_dir"
     venv/bin/pip install jsonschema
 popd
 
-pip install --break-system-packages imgkit
-
 #=================================================
 # CREATE AND CONFIGURE CONFIG.PY
 #=================================================
@@ -95,10 +93,10 @@ yunohost service add "$app" --description="$app daemon for YunoRunner"
 ynh_script_progression "Applying patches to Python scripts..."
 
 # Add source
-ynh_replace \
-    --match="#!/bin/bash" \
-    --replace="#!/bin/bash\nsource \"/var/www/yunorunner/venv/bin/activate\"" \
-    --file="/var/www/yunorunner/package_check/package_check.sh"
+# ynh_replace \
+#     --match="#!/bin/bash" \
+#     --replace="#!/bin/bash\nsource \"/var/www/yunorunner/venv/bin/activate\"" \
+#     --file="/var/www/yunorunner/package_check/package_check.sh"
 
 # Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
@@ -174,6 +172,8 @@ ynh_replace \
     --match=$'({summary_url})]({job_url})' \
     --replace=$'({summary_url})]({public_url})' \
     --file="/var/www/yunorunner/yunorunner/run.py"
+
+pip install --break-system-packages imgkit
 
 #=================================================
 # START SYSTEMD SERVICE
