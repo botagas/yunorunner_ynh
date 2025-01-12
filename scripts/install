@@ -47,6 +47,7 @@ pushd "$install_dir"
     # package_check dep not in apt
     venv/bin/pip install imgkit
     venv/bin/pip install jsonschema
+    venv/bin/pip install pyparsing
 popd
 
 #=================================================
