@@ -32,7 +32,7 @@ ram.runtime = "50M"
 
     [install.path]
     type = "path"
-    default = "/ci"
+    default = "/"
 
     [install.init_main_permission]
     type = "group"
@@ -58,10 +58,10 @@ ram.runtime = "50M"
     default = "https://github.com/YunoHost/apps"
 
     [install.executor]
-    ask.en = "(OPTIONAL) Insert the username of the user who will be eligible to trigger jobs in GitHub"
+    ask.en = "Insert the username of the user who will be eligible to trigger jobs in GitHub"
     type = "string"
     default = ""
-    optional = true
+    optional = false
 
     [install.publicdir]
     ask.en = "(OPTIONAL) If installing on a local domain, but exposing through a different one, insert the public domain here (https://sub.domain.tld)"
