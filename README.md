@@ -29,9 +29,9 @@ This package allows you to self-host a yunorunner instance with the ability to a
 - Create a webhook in github that points to https://example.tld/github, make it trigger on "Issue Comment" and "Pull Request"
 - (OPTIONAL) Edit your README and add the status/integration badges from your server as well
 
-URL PATH for status: `/api/badge/<app_name>/status`
+PATH for status: `/api/badge/<app_name>/status`
 
-URL PATH for integration: `/api/badge/<app_name>/integration`
+PATH for integration: `/api/badge/<app_name>/integration`
 
 Example integration / status badge code: 
 ```
