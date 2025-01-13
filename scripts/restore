@@ -60,8 +60,9 @@ popd
 ynh_script_progression "Restoring system configurations related to $app..." --weight=1
 
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
-
 ynh_restore "/etc/systemd/system/$app.service"
+ynh_restore "/etc/cron.d/$app"
+
 ynh_systemctl --service"$app" --action="enable"
 
 #=================================================
