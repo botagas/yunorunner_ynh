@@ -173,7 +173,7 @@ ynh_replace \
     --replace=$'({summary_url})]({public_url})' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-sudo cat "$PWD/status-integration" >> $run_py
+sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
 pip install --upgrade pip
 pip install --break-system-packages imgkit
