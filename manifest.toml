@@ -53,38 +53,40 @@ ram.runtime = "50M"
     default = "manual"
 
     [install.appsrepo]
-    ask.en = "Where is apps.toml located? Provide github repo, e.g. https://example.tld/path/repo"
-    type = "string"
+    ask.en = "Your GitHub URL to apps.toml file (https://example.tld/path/repo)"
+    type = "url"
     default = "https://github.com/YunoHost/apps"
 
     [install.executor]
-    ask.en = "Who should be able to use the testing commands in the repo? Leave blank if anyone, or insert your github username"
+    ask.en = "(OPTIONAL) Insert the username of the user who will be eligible to trigger jobs in GitHub"
     type = "string"
     default = ""
+    optional = true
 
     [install.publicdir]
-    ask.en = "If this is a local service that you will be exposing through a different domain, provide the public domain/path for the app here"
-    type = "string"
+    ask.en = "(OPTIONAL) If installing on a local domain, but exposing through a different one, insert the public domain here (https://sub.domain.tld)"
+    type = "url"
     default = ""
+    optional = true
 
     [install.githubtoken]
-    ask.en = "Provide your github personal access token here"
+    ask.en = "Insert GitHub personal access token here"
     type = "string"
     optional = false
 
     [install.webhooksecret]
-    ask.en = "Provide your created webhook secret token"
+    ask.en = "Insert Webhook Secret token here"
     type = "string"
     optional = false
 
     [install.distributionchoice]
-    ask.en = "Which OS distribution do you want to choose, for instance: bullseye, bookworm, etc."
+    ask.en = "Insert OS distribution of choice here (bullseye, bookworm, etc.)"
     type = "string"
     default = "bullseye"
     optional = false
 
     [install.ynhbranch]
-    ask.en = "Which YNH branch do you want to choose, for instance: stable, testing, etc."
+    ask.en = "Insert YNH branch of choice (stable, testing, etc.)"
     type = "string"
     default = "stable"
     optional = false
