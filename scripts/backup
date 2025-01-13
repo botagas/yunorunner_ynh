@@ -33,8 +33,6 @@ ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_backup "/etc/systemd/system/$app.service"
 
-# ynh_backup "/etc/cron.d/$app"
-
 #=================================================
 # END OF SCRIPT
 #=================================================
