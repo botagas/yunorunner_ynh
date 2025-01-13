@@ -54,6 +54,14 @@ popd
 #=================================================
 ynh_script_progression "Configuring YunoRunner settings..."
 
+# Check if $publicdir is set
+if [ -z "$publicdir" ]; then
+    # If not set, assign the default value
+    publicdir="https://$domain"
+    echo "No publicdir provided, setting default to https://$publicdir"
+fi
+
+
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
 BASE_PUBLIC_URL = "$publicdir"
