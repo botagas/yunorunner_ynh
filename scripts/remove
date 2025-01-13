@@ -24,7 +24,7 @@ ynh_config_remove_systemd
 ynh_config_remove_nginx
 
 # Remove Incus
-# yunohost app remove incus
+yunohost app remove incus
 #=================================================
 # END OF SCRIPT
 #=================================================

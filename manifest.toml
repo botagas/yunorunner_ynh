@@ -32,7 +32,7 @@ ram.runtime = "50M"
 
     [install.path]
     type = "path"
-    default = "/ci"
+    default = "/"
 
     [install.init_main_permission]
     type = "group"
@@ -46,48 +46,50 @@ ram.runtime = "50M"
     default = "personal_ci"
 
     [install.mode]
-    ask.en = "Should the jobs be automatically run from the apps list? In manual mode, Yunorunner will expect to be triggered by the `ciclic` command or webhooks (like ci-apps-dev). In auto mode, all apps of the catalog will be scheduled to be tested at least once a month and upon any change in their designated main branch (like ci-apps)."
+    ask.en = "Self-hosted package only works in manual mode, but you may test as you see fit."
     type = "select"
     choices.auto = "Automatically from the catalog"
     choices.manual = "Manually via ciclic or webhook"
     default = "manual"
 
     [install.appsrepo]
-    ask.en = "Where is apps.toml located? Provide github repo, e.g. https://example.tld/path/repo"
+    ask.en = "Your GitHub URL to apps.toml file (https://example.tld/user/apps)"
     type = "string"
     default = "https://github.com/YunoHost/apps"
 
     [install.executor]
-    ask.en = "Who should be able to use the testing commands in the repo? Leave blank if anyone, or insert your github username"
+    ask.en = "Insert the username of the user who will be eligible to trigger jobs in GitHub"
     type = "string"
     default = ""
+    optional = false
 
     [install.publicdir]
-    ask.en = "If this is a local service that you will be exposing through a different domain, provide the public domain/path for the app here"
+    ask.en = "(OPTIONAL) If installing on a local domain, but exposing through a different one, insert the public domain here (https://sub.domain.tld)"
     type = "string"
     default = ""
+    optional = true
 
     [install.githubtoken]
-    ask.en = "Provide your github personal access token here"
+    ask.en = "Insert GitHub personal access token here"
     type = "string"
-    optional = "false"
+    optional = false
 
     [install.webhooksecret]
-    ask.en = "Provide your created webhook secret token"
+    ask.en = "Insert Webhook Secret token here"
     type = "string"
-    optional = "false"
+    optional = false
 
     [install.distributionchoice]
-    ask.en = "Which OS distribution do you want to choose, for instance: bullseye, bookworm, etc."
+    ask.en = "Insert OS distribution of choice here (bullseye, bookworm, etc.)"
     type = "string"
     default = "bullseye"
-    optional = "false"
+    optional = false
 
     [install.ynhbranch]
-    ask.en = "Which YNH branch do you want to choose, for instance: stable, testing, etc."
+    ask.en = "Insert YNH branch of choice (stable, testing, etc.)"
     type = "string"
     default = "stable"
-    optional = "false"
+    optional = false
 
 [resources]
     [resources.system_user]

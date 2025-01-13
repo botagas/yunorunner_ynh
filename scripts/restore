@@ -47,9 +47,11 @@ pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install -r yunorunner/requirements.txt
-
+    venv/bin/pip install -r package_check/requirements.txt
     # package_check dep not in apt
     venv/bin/pip install imgkit
+    venv/bin/pip install jsonschema
+    venv/bin/pip install pyparsing
 popd
 
 #=================================================
@@ -58,12 +60,10 @@ popd
 ynh_script_progression "Restoring system configurations related to $app..." --weight=1
 
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
-
 ynh_restore "/etc/systemd/system/$app.service"
-ynh_systemctl --service"$app" --action="enable"
-yunohost service add "$app" --description="$app daemon for YunoRunner"
-
 ynh_restore "/etc/cron.d/$app"
+
+ynh_systemctl --service"$app" --action="enable"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE

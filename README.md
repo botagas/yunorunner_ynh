@@ -5,8 +5,8 @@ It shall NOT be edited by hand.
 
 # YunoRunner for YunoHost
 
-[![Integration level](https://apps.yunohost.org/badge/integration/yunorunner)](https://ci-apps.yunohost.org/ci/apps/yunorunner/)
-![Working status](https://apps.yunohost.org/badge/state/yunorunner)
+[![Integration level](https://img.shields.io/endpoint?url=https://yunorunner.tiesiog.lt/api/badge/yunorunner/integration)](https://ci-apps.yunohost.org/ci/apps/yunorunner/)
+![Working status](https://img.shields.io/endpoint?url=https://yunorunner.tiesiog.lt/api/badge/yunorunner/status)
 ![Maintenance status](https://apps.yunohost.org/badge/maintained/yunorunner)
 
 [![Install YunoRunner with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=yunorunner)
@@ -24,9 +24,20 @@ It is based on Incus / LXC and uses [package_check](https://github.com/YunoHost/
 
 This package allows you to self-host a yunorunner instance with the ability to also use it in your own github repositories. The process is:
 - Create a github personal access token in github developer settings and grant it these permissions: read metadata, read/write to commit statuses and pull requests
-- Clone YunoHost/apps or add a apps.toml file in your repo with necessary details (example in apps.toml of YunoHost/apps.toml)
+- Clone YunoHost/apps and add necessary details within apps.toml file in your repo
 - Install the app and provide the token, select domain, add the repo for apps.toml
 - Create a webhook in github that points to https://example.tld/github, make it trigger on "Issue Comment" and "Pull Request"
+- (OPTIONAL) Edit your README and add the status/integration badges from your server as well
+
+PATH for status: `/api/badge/<app_name>/status`
+
+PATH for integration: `/api/badge/<app_name>/integration`
+
+Example integration / status badge code: 
+```
+[![Integration level](https://img.shields.io/endpoint?url=https://sub.domain.tld/api/badge/<app_name>/integration)](https://ci-apps.yunohost.org/ci/apps/<app_name>/)`
+![Working status](https://img.shields.io/endpoint?url=https://sub.domain.tld/api/badge/<app_name>/status)
+```
 
 **Shipped version:** 2024.12.10~ynh1
 

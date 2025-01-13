@@ -25,7 +25,6 @@ ynh_script_progression "Setting up source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
-_git_clone_or_pull "$install_dir/package_check/package_linter" https://github.com/YunoHost/package_linter
 
 chown "$app:$app" "$install_dir"
 
@@ -43,8 +42,11 @@ pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install -r yunorunner/requirements.txt
+    venv/bin/pip install -r package_check/requirements.txt
     # package_check dep not in apt
     venv/bin/pip install imgkit
+    venv/bin/pip install jsonschema
+    venv/bin/pip install pyparsing
 popd
 
 #=================================================
@@ -52,10 +54,17 @@ popd
 #=================================================
 ynh_script_progression "Configuring YunoRunner settings..."
 
+# Check if $publicdir is set
+if [ -z "$publicdir" ]; then
+    # If not set, assign the default value
+    publicdir="https://$domain"
+    echo "No publicdir provided, setting default to https://$publicdir"
+fi
+
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
-BASE_PUBLIC_URL = "${publicdir:-}"
-EXECUTOR = "${executor:-}"
+BASE_PUBLIC_URL = "$publicdir"
+EXECUTOR = "$executor"
 APPSREPO = "$appsrepo"
 PORT = 8095
 MONITOR_APPS_LIST = False
@@ -80,6 +89,7 @@ ynh_script_progression "Adding system configurations related to $app..."
 
 # Create a dedicated NGINX config
 ynh_config_add_nginx
+ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 
 # Create a dedicated systemd config
 ynh_config_add_systemd
@@ -88,6 +98,12 @@ ynh_config_add_systemd
 # APPLY PATCHES
 #=================================================
 ynh_script_progression "Applying patches to Python scripts..."
+
+# Add source
+#ynh_replace \
+#    --match="#!/bin/bash" \
+#    --replace="#!/bin/bash\nsource \"/var/www/yunorunner/venv/bin/activate\"" \
+#    --file="/var/www/yunorunner/package_check/package_check.sh"
 
 # Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
@@ -111,27 +127,17 @@ ynh_replace \
     --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Replace hardcoded repo URL
+# Replace the git clone command to include necessary changes
 ynh_replace \
-    --match="https://github.com/YunoHost/apps" \
-    --replace="app.config.APPSREPO" \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+    --match='git clone --quiet \$git_repository "./package_linter"' \
+    --replace='git clone --quiet $git_repository "./package_linter"\n    # IMPORT_SYS_PLACEHOLDER\n    # Apply other replacements\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|\"https://github.com/YunoHost/apps\"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py' \
+    --file="/var/www/yunorunner/package_check/lib/common.sh"
 
-# Replace YunoHost-Apps with app.config.EXECUTOR
+# Step 2: Replace the placeholder with the actual code
 ynh_replace \
-    --match=$'repo_org = f"https://github.com/YunoHost-Apps/%s_ynh" % (self.app_id)' \
-    --replace=$'repo_org = f"https://github.com/{app.config.EXECUTOR}/%s_ynh" % (self.app_id)' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
-ynh_replace \
-    --match=$'if repo_url.lower().startswith("https://github.com/YunoHost-Apps/"):' \
-    --replace=$'if repo_url.lower().startswith("https://github.com/{app.config.EXECUTOR}/"):' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
-
-# Replace labriqueinternet with app.config.EXECUTOR
-ynh_replace \
-    --match=$'repo_brique = "https://github.com/labriqueinternet/%s_ynh" % (self.app_id)' \
-    --replace=$'repo_brique = "https://github.com/{app.config.EXECUTOR/%s_ynh" % (self.app_id)' \
-    --file="/var/www/yunorunner/package_check/package_linter/tests/test_catalog.py"
+    --match='# IMPORT_SYS_PLACEHOLDER' \
+    --replace=$'sed -i \'1 i from sys import path\\\\nfrom types import SimpleNamespace\\\\npath.append("/var/www/yunorunner/yunorunner")\\\\n\\\\n# Load variables directly from config.py\\\\nconfig_dict = {}\\\\nexec(open("/var/www/yunorunner/yunorunner/config.py").read(), config_dict)\\\\n\\\\n# Convert the config dictionary into an object with attributes\\\\nconfig = SimpleNamespace(**config_dict)\\\\n\\\\n# Initialize app and assign config\\\\napp = type("App", (object,), {})()\\\\napp.config = config\\\\n\' ./package_linter/tests/test_catalog.py' \
+    --file="/var/www/yunorunner/package_check/lib/common.sh"
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
@@ -156,6 +162,26 @@ ynh_replace \
     --match=$'f"https://api.github.com/orgs/YunoHost-Apps/members/{user}",' \
     --replace=$'f"https://api.github.com/orgs/YunoHost-Apps/members/tituspijean",' \
     --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Replace job_url in body statement with public_url
+ynh_replace \
+    --match='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)' \
+    --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+# ynh_replace \
+#     --match=$'({shield_badge_url})]({job_url})' \
+#     --replace=$'({shield_badge_url})]({public_url})' \
+#     --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match=$'({summary_url})]({job_url})' \
+    --replace=$'({summary_url})]({public_url})' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
+
+pip install imgkit --break-system-packages
 
 #=================================================
 # START SYSTEMD SERVICE
