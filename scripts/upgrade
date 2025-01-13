@@ -158,10 +158,10 @@ ynh_config_add_systemd
 ynh_script_progression "Applying patches to Python scripts..."
 
 # Add source
-# ynh_replace \
-#     --match="#!/bin/bash" \
-#     --replace="#!/bin/bash\nsource \"/var/www/yunorunner/venv/bin/activate\"" \
-#     --file="/var/www/yunorunner/package_check/package_check.sh"
+ynh_replace \
+    --match="#!/bin/bash" \
+    --replace="#!/bin/bash\nsource \"/var/www/yunorunner/venv/bin/activate\"" \
+    --file="/var/www/yunorunner/package_check/package_check.sh"
 
 # Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
@@ -239,7 +239,7 @@ ynh_replace \
 
 sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
-pip install --break-system-packages imgkit
+# pip install --break-system-packages imgkit
 
 #=================================================
 # START SYSTEMD SERVICE
