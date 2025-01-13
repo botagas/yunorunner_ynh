@@ -1,0 +1,62 @@
+
+@app.route("/api/badge/<app_name>/status", methods=["GET"])
+async def api_status_badge(request, app_name):
+    """
+    API endpoint for generating the working status badge for a given app.
+    """
+    result_path = (
+        yunorunner_dir
+        + f"/results/logs/{app_name}_{app.config.ARCH}_{app.config.YNH_BRANCH}_results.json"
+    )
+    if not os.path.exists(result_path):
+        return response.json(
+            {"schemaVersion": 1, "label": "status", "message": "unknown", "color": "lightgrey"}
+        )
+    with open(result_path, "r") as result_file:
+        results = json.load(result_file)
+    level = results.get("level", None)
+    if level is None:
+        message = "unknown"
+        color = "lightgrey"
+    elif level >= 5:
+        message = "working"
+        color = "brightgreen"
+    else:
+        message = "broken"
+        color = "red"
+    return response.json(
+        {"schemaVersion": 1, "label": "status", "message": message, "color": color}
+    )
+
+@app.route("/api/badge/<app_name>/integration", methods=["GET"])
+async def api_integration_badge(request, app_name):
+    """
+    API endpoint for generating the integration level badge for a given app.
+    """
+    result_path = (
+        yunorunner_dir
+        + f"/results/logs/{app_name}_{app.config.ARCH}_{app.config.YNH_BRANCH}_results.json"
+    )
+    if not os.path.exists(result_path):
+        return response.json(
+            {"schemaVersion": 1, "label": "integration", "message": "unknown", "color": "lightgrey"}
+        )
+    with open(result_path, "r") as result_file:
+        results = json.load(result_file)
+    level = results.get("level", None)
+    if level is None:
+        message = "unknown"
+        color = "lightgrey"
+    else:
+        message = f"level {level}"
+        if level >= 7:
+            color = "brightgreen"
+        elif level >= 5:
+            color = "yellowgreen"
+        elif level >= 3:
+            color = "orange"
+        else:
+            color = "red"
+    return response.json(
+        {"schemaVersion": 1, "label": "integration", "message": message, "color": color}
+    )
