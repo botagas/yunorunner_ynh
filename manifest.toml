@@ -53,7 +53,7 @@ ram.runtime = "50M"
     default = "manual"
 
     [install.appsrepo]
-    ask.en = "Your GitHub URL to apps.toml file (https://example.tld/path/repo)"
+    ask.en = "Your GitHub URL to apps.toml file (https://example.tld/user/apps)"
     type = "string"
     default = "https://github.com/YunoHost/apps"
 
