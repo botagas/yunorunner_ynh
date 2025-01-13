@@ -61,7 +61,6 @@ if [ -z "$publicdir" ]; then
     echo "No publicdir provided, setting default to https://$publicdir"
 fi
 
-
 cat <<EOF > "$install_dir/yunorunner/config.py"
 BASE_URL = "https://$domain"
 BASE_PUBLIC_URL = "$publicdir"
