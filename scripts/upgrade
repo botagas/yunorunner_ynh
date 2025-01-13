@@ -148,10 +148,10 @@ ynh_script_progression "Upgrading system configurations related to $app..." --we
 
 # Create a dedicated NGINX config
 ynh_config_add_nginx
+ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 
 # Create a dedicated systemd config
 ynh_config_add_systemd
-
 #=================================================
 # APPLY PATCHES
 #=================================================
