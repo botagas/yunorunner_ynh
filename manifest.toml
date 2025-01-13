@@ -46,7 +46,7 @@ ram.runtime = "50M"
     default = "personal_ci"
 
     [install.mode]
-    ask.en = "Should the jobs be automatically run from the apps list? In manual mode, Yunorunner will expect to be triggered by the `ciclic` command or webhooks (like ci-apps-dev). In auto mode, all apps of the catalog will be scheduled to be tested at least once a month and upon any change in their designated main branch (like ci-apps)."
+    ask.en = "Self-hosted package only works in manual mode, but you may test as you see fit."
     type = "select"
     choices.auto = "Automatically from the catalog"
     choices.manual = "Manually via ciclic or webhook"
@@ -54,7 +54,7 @@ ram.runtime = "50M"
 
     [install.appsrepo]
     ask.en = "Your GitHub URL to apps.toml file (https://example.tld/path/repo)"
-    type = "url"
+    type = "string"
     default = "https://github.com/YunoHost/apps"
 
     [install.executor]
@@ -65,7 +65,7 @@ ram.runtime = "50M"
 
     [install.publicdir]
     ask.en = "(OPTIONAL) If installing on a local domain, but exposing through a different one, insert the public domain here (https://sub.domain.tld)"
-    type = "url"
+    type = "string"
     default = ""
     optional = true
 
