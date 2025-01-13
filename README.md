@@ -30,7 +30,9 @@ This package allows you to self-host a yunorunner instance with the ability to a
 - (OPTIONAL) Edit your README and add the status/integration badges from your server as well
 
 URL PATH for status: `/api/badge/<app_name>/status`
+
 URL PATH for integration: `/api/badge/<app_name>/integration`
+
 Example integration / status badge code: 
 ```
 [![Integration level](https://img.shields.io/endpoint?url=https://sub.domain.tld/api/badge/<app_name>/integration)](https://ci-apps.yunohost.org/ci/apps/<app_name>/)`
