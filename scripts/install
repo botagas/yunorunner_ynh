@@ -122,11 +122,10 @@ ynh_replace \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 # Replace the git clone command to include necessary changes
-common_sh="/var/www/yunorunner/package_check/lib/common.sh"
 ynh_replace \
     --match='git clone --quiet \$git_repository "./package_linter"' \
     --replace='git clone --quiet $git_repository "./package_linter"\n    # IMPORT_SYS_PLACEHOLDER\n    # Apply other replacements\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|\"https://github.com/YunoHost/apps\"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py' \
-    --file="$common_sh"
+    --file="/var/www/yunorunner/package_check/lib/common.sh"
 
 # Step 2: Replace the placeholder with the actual code
 ynh_replace \
@@ -172,6 +171,11 @@ ynh_replace \
 ynh_replace \
     --match=$'({summary_url})]({job_url})' \
     --replace=$'({summary_url})]({public_url})' \
+    --file="/var/www/yunorunner/yunorunner/run.py"
+
+ynh_replace \
+    --match=$'    return response.redirect(job_url)' \
+    --replace=$'    return response.redirect(job_url)\n@app.route("/api/badge/<app_name>/status", methods=["GET"])\nasync def api_status_badge(request, app_name):\n    """\n    API endpoint for generating the working status badge for a given app.\n    """\n    result_path = (\n        yunorunner_dir\n        + f"/results/logs/{app_name}_{app.config.ARCH}_{app.config.YNH_BRANCH}_results.json"\n    )\n    if not os.path.exists(result_path):\n        return response.json(\n            {"schemaVersion": 1, "label": "status", "message": "unknown", "color": "lightgrey"}\n        )\n    with open(result_path, "r") as result_file:\n        results = json.load(result_file)\n    level = results.get("level", None)\n    if level is None:\n        message = "unknown"\n        color = "lightgrey"\n    elif level >= 5:\n        message = "working"\n        color = "brightgreen"\n    else:\n        message = "broken"\n        color = "red"\n    return response.json(\n        {"schemaVersion": 1, "label": "status", "message": message, "color": color}\n    )\n\n@app.route("/api/badge/<app_name>/integration", methods=["GET"])\nasync def api_integration_badge(request, app_name):\n    """\n    API endpoint for generating the integration level badge for a given app.\n    """\n    result_path = (\n        yunorunner_dir\n        + f"/results/logs/{app_name}_{app.config.ARCH}_{app.config.YNH_BRANCH}_results.json"\n    )\n    if not os.path.exists(result_path):\n        return response.json(\n            {"schemaVersion": 1, "label": "integration", "message": "unknown", "color": "lightgrey"}\n        )\n    with open(result_path, "r") as result_file:\n        results = json.load(result_file)\n    level = results.get("level", None)\n    if level is None:\n        message = "unknown"\n        color = "lightgrey"\n    else:\n        message = f"level {level}"\n        if level >= 7:\n            color = "brightgreen"\n        elif level >= 5:\n            color = "yellowgreen"\n        elif level >= 3:\n            color = "orange"\n        else:\n            color = "red"\n    return response.json(\n        {"schemaVersion": 1, "label": "integration", "message": message, "color": color}\n    )'
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 pip install --upgrade pip
