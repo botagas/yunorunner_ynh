@@ -63,9 +63,6 @@ ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_restore "/etc/systemd/system/$app.service"
 ynh_systemctl --service"$app" --action="enable"
-yunohost service add "$app" --description="$app daemon for YunoRunner"
-
-# ynh_restore "/etc/cron.d/$app"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
