@@ -70,8 +70,8 @@ if [[ "$cluster" == "cluster" ]] || [[ "$cluster" == "no" ]]; then
 fi
 
 if [ ! -d "$install_dir/package_check" ]; then
-    ynh_exec_as "$app" git clone https://github.com/YunoHost/package_check "$install_dir/package_check"
-    ynh_exec_as "$app" git clone https://github.com/YunoHost/package_linter "$install_dir/package_check/package_linter"
+    ynh_exec_as_app git clone https://github.com/YunoHost/package_check "$install_dir/package_check"
+    ynh_exec_as_app git clone https://github.com/YunoHost/package_linter "$install_dir/package_check/package_linter"
 
 fi
 
@@ -100,7 +100,7 @@ if ! yunohost app list --output-as json --quiet | jq -e '.apps[] | select(.id ==
 fi
 
 # Always do it on upgrade, just in case
-usermod -a -G incus-admin "$app"
+usermod -aG incus-admin "$app"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -134,7 +134,7 @@ popd
 #=================================================
 ynh_script_progression "Updating a config file..."
 
-ynh_backup_if_checksum_is_different --file="$install_dir/yunorunner/config.py"
+ynh_backup_if_checksum_is_different "$install_dir/yunorunner/config.py"
 
 chmod 400 "$install_dir/yunorunner/config.py"
 chown "$app:$app" "$install_dir/yunorunner/config.py"
@@ -149,9 +149,6 @@ ynh_config_add_nginx
 
 # Create a dedicated systemd config
 ynh_config_add_systemd
-yunohost service add "$app" --description="$app daemon for YunoRunner"
-
-ynh_add_config --template="cron" --destination="/etc/cron.d/$app"
 
 #=================================================
 # APPLY PATCHES
