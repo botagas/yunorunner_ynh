@@ -100,7 +100,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
-    main.default = 8095
+    main.default = 8099
 
     [resources.apt]
     packages = [
