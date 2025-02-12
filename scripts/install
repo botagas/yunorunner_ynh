@@ -107,8 +107,8 @@ ynh_script_progression "Applying patches to Python scripts..."
 
 # Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
-    --match="ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
-    --replace="ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --match=$'ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]' \
+    --replace=$'ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 ynh_replace \
