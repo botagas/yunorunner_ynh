@@ -25,8 +25,8 @@ ynh_script_progression "Setting up source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
-mkdir -p "$install_dir/package_check/package_linter"
-mkdir -p "$install_dir/package_check/package_linter/.apps"
+# mkdir -p "$install_dir/package_check/package_linter"
+# mkdir -p "$install_dir/package_check/package_linter/.apps"
 ynh_hide_warnings git config --system --add safe.directory "$install_dir"
 ynh_hide_warnings git config --system --add safe.directory "$install_dir/package_check"
 ynh_hide_warnings git config --system --add safe.directory "$install_dir/package_check/package_linter"
