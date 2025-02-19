@@ -52,6 +52,7 @@ pushd "$install_dir"
     venv/bin/pip install imgkit
     venv/bin/pip install jsonschema
     venv/bin/pip install pyparsing
+    venv/bin/pip install toml
 popd
 
 #=================================================
