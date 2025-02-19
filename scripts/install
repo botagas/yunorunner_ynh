@@ -25,9 +25,10 @@ ynh_script_progression "Setting up source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
+mkdir -p "$install_dir/package_check/package_linter"
+mkdir -p "$install_dir/package_check/package_linter/.apps"
 
 chown "$app:$app" "$install_dir"
-
 chmod -R o-rwx "$install_dir"
 chown -R "$app:$app" "$install_dir"
 chown "$app:www-data" "$install_dir" "$install_dir/yunorunner"
@@ -66,7 +67,7 @@ BASE_URL = "https://$domain"
 BASE_PUBLIC_URL = "$publicdir"
 EXECUTOR = "$executor"
 APPSREPO = "$appsrepo"
-PORT = 8095
+PORT = $port
 MONITOR_APPS_LIST = False
 MONITOR_GIT = False
 MONITOR_ONLY_GOOD_QUALITY_APPS = False
@@ -107,8 +108,8 @@ ynh_script_progression "Applying patches to Python scripts..."
 
 # Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
-    --match="ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
-    --replace="ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]" \
+    --match=$'ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]' \
+    --replace=$'ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 ynh_replace \
@@ -182,6 +183,11 @@ ynh_replace \
 sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
 pip install imgkit --break-system-packages
+
+ynh_hide_warnings ynh_exec_as_app git config --global --add safe.directory "$install_dir"
+ynh_hide_warnings ynh_exec_as_app git config --global --add safe.directory "$install_dir/package_check"
+ynh_hide_warnings ynh_exec_as_app git config --global --add safe.directory "$install_dir/package_check/package_linter"
+ynh_hide_warnings ynh_exec_as_app git config --global --add safe.directory "$install_dir/package_check/package_linter/.apps"
 
 #=================================================
 # START SYSTEMD SERVICE
