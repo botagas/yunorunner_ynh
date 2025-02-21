@@ -25,7 +25,6 @@ ynh_script_progression "Setting up source files..."
 
 _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
-ynh_hide_warnings git config --system --add safe.directory "*"
 
 chown "$app:$app" "$install_dir"
 chmod -R o-rwx "$install_dir"
