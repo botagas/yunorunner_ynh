@@ -175,10 +175,10 @@ ynh_replace \
 #     --replace=$'({shield_badge_url})]({public_url})' \
 #     --file="/var/www/yunorunner/yunorunner/run.py"
 
-ynh_replace \
-    --match=$'({summary_url})]({job_url})' \
-    --replace=$'({summary_url})]({public_url})' \
-    --file="/var/www/yunorunner/yunorunner/run.py"
+# ynh_replace \
+#     --match=$'({summary_url})]({job_url})' \
+#     --replace=$'({summary_url})]({public_url})' \
+#     --file="/var/www/yunorunner/yunorunner/run.py"
 
 sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
