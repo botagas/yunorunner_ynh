@@ -27,7 +27,6 @@ _git_clone_or_pull "$install_dir/yunorunner"
 _git_clone_or_pull "$install_dir/package_check" https://github.com/YunoHost/package_check
 
 chown "$app:$app" "$install_dir"
-
 chmod -R o-rwx "$install_dir"
 chown -R "$app:$app" "$install_dir"
 chown "$app:www-data" "$install_dir" "$install_dir/yunorunner"
@@ -41,12 +40,13 @@ ynh_script_progression "Installing Python dependencies..."
 pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
-    venv/bin/pip install -r yunorunner/requirements.txt
     venv/bin/pip install -r package_check/requirements.txt
+    venv/bin/pip install -r yunorunner/requirements.txt
     # package_check dep not in apt
     venv/bin/pip install imgkit
     venv/bin/pip install jsonschema
     venv/bin/pip install pyparsing
+    venv/bin/pip install toml
 popd
 
 #=================================================
@@ -92,6 +92,7 @@ ynh_config_add_nginx
 ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 
 # Create a dedicated systemd config
+yunohost service add "$app" --description="YunoRunner package testing service"
 ynh_config_add_systemd
 
 #=================================================
@@ -130,7 +131,7 @@ ynh_replace \
 # Replace the git clone command to include necessary changes
 ynh_replace \
     --match='git clone --quiet \$git_repository "./package_linter"' \
-    --replace='git clone --quiet $git_repository "./package_linter"\n    # IMPORT_SYS_PLACEHOLDER\n    # Apply other replacements\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|\"https://github.com/YunoHost/apps\"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py' \
+    --replace='git clone --quiet $git_repository "./package_linter"\n    # IMPORT_SYS_PLACEHOLDER\n    # Apply other replacements\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|\"https://github.com/YunoHost/apps\"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py\n    git config --global --add safe.directory /var/www/yunorunner/package_check\n    git config --global --add safe.directory /var/www/yunorunner/package_check/package_linter/.apps\n    git config --global --add safe.directory /var/www/yunorunner/package_check/package_linter' \
     --file="/var/www/yunorunner/package_check/lib/common.sh"
 
 # Step 2: Replace the placeholder with the actual code
