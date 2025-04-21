@@ -5,8 +5,8 @@ It shall NOT be edited by hand.
 
 # YunoRunner for YunoHost
 
-[![Integration level](https://img.shields.io/endpoint?url=https://yunorunner.tiesiog.lt/api/badge/yunorunner/integration)](https://ci-apps.yunohost.org/ci/apps/yunorunner/)
-![Working status](https://img.shields.io/endpoint?url=https://yunorunner.tiesiog.lt/api/badge/yunorunner/status)
+[![AUTOMATIC TESTS LEVEL](https://yunorunner.tiesiog.lt/api/badge/yunorunner/integration)](https://ci-apps.yunohost.org/ci/apps/yunorunner/)
+![WORKING STATUS](https://yunorunner.tiesiog.lt/api/badge/yunorunner/status)
 ![Maintenance status](https://apps.yunohost.org/badge/maintained/yunorunner)
 
 [![Install YunoRunner with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=yunorunner)
