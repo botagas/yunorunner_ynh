@@ -122,10 +122,7 @@ ynh_replace \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
 # Modify the cmd variable in run.py to include apply_changes.sh
-ynh_replace \
-    --match=$'cmd = f"nice --adjustment=10 script -qefc \'/bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1\'"' \
-    --replace=$'cmd = f"nice --adjustment=10 script -qefc \'/bin/bash /var/www/yunorunner/yunorunner/apply_changes.sh && /bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1\'"' \
-    --file="/var/www/yunorunner/yunorunner/run.py"
+sed -i "s|cmd = f\"nice --adjustment=10 script -qefc '/bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1'\"|cmd = f\"nice --adjustment=10 script -qefc '/bin/bash /var/www/yunorunner/yunorunner/apply_changes.sh && /bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1'\"|" /var/www/yunorunner/yunorunner/run.py
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
