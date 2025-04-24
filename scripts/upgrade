@@ -213,8 +213,7 @@ sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
 mv "$PWD/apply_changes.py" "/var/www/yunorunner/yunorunner/apply_changes.py"
 chmod +x /var/www/yunorunner/yunorunner/apply_changes.py
-chmod +x "$PWD/run_job_changes.py"
-ynh_exec_as_app /usr/bin/env python3 "$PWD/run_job_changes.py"
+/usr/bin/env python3 "$PWD/run_job_changes.py"
 
 # pip install --break-system-packages imgkit
 
