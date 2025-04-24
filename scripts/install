@@ -158,8 +158,6 @@ chown "$app:$app" "/var/www/yunorunner/yunorunner/apply_changes.py"
 chmod 744 "/var/www/yunorunner/yunorunner/apply_changes.py"
 /usr/bin/env python3 "$PWD/run_job_changes.py"
 
-pip install imgkit --break-system-packages
-
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
