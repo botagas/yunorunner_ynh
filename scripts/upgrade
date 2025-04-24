@@ -179,12 +179,6 @@ ynh_replace \
     --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# Modify the cmd variable in run.py to include apply_changes.sh
-ynh_replace \
-    --match=$'/bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1' \
-    --replace=$'/bin/bash /var/www/yunorunner/yunorunner/apply_changes.sh && /bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1' \
-    --file="/var/www/yunorunner/yunorunner/run.py"
-
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
     --match="\"github-actions\[bot\]\",\s*" \
@@ -214,6 +208,9 @@ ynh_replace \
     --match='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)' \
     --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
     --file="/var/www/yunorunner/yunorunner/run.py"
+
+# Modify the cmd variable in run.py to include apply_changes.sh
+ynh_replace --match="/bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1" --replace="/bin/bash /var/www/yunorunner/yunorunner/apply_changes.sh && /bin/bash {app.config.PACKAGE_CHECK_PATH} {job.url_or_path} 2>&1" --file="/var/www/yunorunner/yunorunner/run.py"
 
 sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
