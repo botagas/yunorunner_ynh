@@ -224,7 +224,7 @@ ynh_script_progression "Starting $app's systemd service..."
 ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
 
 #=================================================
-# DEACTIVE MAINTENANCE MODE
+# DEACTIVATE MAINTENANCE MODE
 #=================================================
 
 ynh_maintenance_mode_OFF
