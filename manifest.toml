@@ -4,7 +4,7 @@ packaging_format = 2
 
 id = "yunorunner"
 name = "YunoRunner"
-description.en = "CI runner of YunoHost"
+description.en = "A fully self-hosted CI runner of YunoHost"
 description.fr = "Runner d'intégration continue de YunoHost"
 
 version = "2024.12.10~ynh1"
