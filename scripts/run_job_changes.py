@@ -110,9 +110,31 @@ def add_source_to_package_check_sh():
 
     print("Added virtual environment activation to package_check.sh.")
 
+# Function to modify is_user_in_organization to skip the user check
+def skip_user_check_in_api():
+    if not run_py_path.exists():
+        print(f"File not found: {run_py_path}")
+        return
+
+    with run_py_path.open("r") as file:
+        content = file.read()
+
+    # Replace the is_user_in_organization function with a version that skips the check
+    new_content = re.sub(
+        r"async def is_user_in_organization\(user\):\n\s+async with aiohttp\.ClientSession\([\s\S]+?return resp\.status == 204",
+        r"async def is_user_in_organization(user):\n    return response.empty(status=200)",
+        content,
+    )
+
+    with run_py_path.open("w") as file:
+        file.write(new_content)
+
+    print("Modified is_user_in_organization to skip the user check.")
+
 # Main entry point
 if __name__ == "__main__":
     add_os_system_to_run_job()
     modify_cmd_line()
     replace_shebang_in_run_py()
     add_source_to_package_check_sh()
+    skip_user_check_in_api()
