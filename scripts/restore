@@ -64,7 +64,7 @@ ynh_restore "/etc/systemd/system/$app.service"
 ynh_restore "/etc/cron.d/$app"
 yunohost service add "$app" --description="YunoRunner package testing service"
 
-ynh_systemctl --service"$app" --action="enable"
+ynh_systemctl --service="$app" --action="enable"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
