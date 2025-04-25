@@ -127,7 +127,7 @@ def skip_user_check_in_api():
     # Replace the is_user_in_organization function with a version that skips the check
     new_content = re.sub(
         r"async def is_user_in_organization\(user\):\n\s+async with aiohttp\.ClientSession\([\s\S]+?return resp\.status == 204",
-        r"async def is_user_in_organization(user):\n    return response.empty(status=200)",
+        r"async def is_user_in_organization(user):\n            return response.empty(status=200)",
         content,
     )
 
