@@ -101,6 +101,7 @@ ram.runtime = "50M"
 
     [resources.ports]
     main.default = 8095
+    main.exposed = "TCP"
 
     [resources.apt]
     packages = [
