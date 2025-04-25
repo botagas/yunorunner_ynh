@@ -14,6 +14,7 @@ test_format = 1.0
     args.webhooksecret = "test"
     args.distributionchoice = "bullseye"
     args.ynhbranch = "stable"
+    args.port = 8097
 
     # ------------
     # Tests to run
