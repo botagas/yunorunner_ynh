@@ -209,7 +209,7 @@ ynh_replace \
     --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
+cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
 mv "$PWD/apply_changes.py" "/var/www/yunorunner/yunorunner/apply_changes.py"
 chown "$app:$app" "/var/www/yunorunner/yunorunner/apply_changes.py"
@@ -221,10 +221,10 @@ chmod 744 "/var/www/yunorunner/yunorunner/apply_changes.py"
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
+ynh_systemctl --service="$app" --action="start" --log_path="systemd"
 
 #=================================================
-# DEACTIVE MAINTENANCE MODE
+# DEACTIVATE MAINTENANCE MODE
 #=================================================
 
 ynh_maintenance_mode_OFF

@@ -12,14 +12,33 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="stop" --log_path="systemd" --timeout=30
+ynh_systemctl --service="$app" --action="stop" --log_path="systemd"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
 ynh_script_progression "Updating NGINX web server configuration..."
 
-ynh_change_url_nginx_config
+ynh_config_change_url_nginx
+
+# Retrieve BASE_URL and BASE_PUBLIC_URL from YunoHost app settings
+base_url=$(ynh_app_setting_get --key="BASE_URL")
+base_public_url=$(ynh_app_setting_get --key="BASE_PUBLIC_URL")
+different=$(ynh_app_setting_get --key="DIFFERENT")
+
+# Check if BASE_URL is equal to BASE_PUBLIC_URL
+if [ "$different" = "true" ]; then
+    # If DIFFERENT is true, keep BASE_PUBLIC_URL unchanged
+    publicdir="$base_public_url"
+    ynh_print_info "DIFFERENT is true. Keeping BASE_PUBLIC_URL unchanged: $publicdir"
+else
+    # If DIFFERENT is false, set BASE_PUBLIC_URL to the same value as BASE_URL
+    publicdir="https://$domain"
+    ynh_print_info  "DIFFERENT is false. Setting BASE_PUBLIC_URL to the same value as BASE_URL: $publicdir"
+fi
+
+ynh_app_setting_set --key="BASE_URL" --value="https://$domain"
+ynh_app_setting_set --key="BASE_PUBLIC_URL" --value="$publicdir"
 
 #=================================================
 # START SYSTEMD SERVICE

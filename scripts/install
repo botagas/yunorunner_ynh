@@ -59,6 +59,11 @@ if [ -z "$publicdir" ]; then
     # If not set, assign the default value
     publicdir="https://$domain"
     echo "No publicdir provided, setting default to https://$publicdir"
+    ynh_app_setting_set --key="DIFFERENT" --value="false"
+else
+    # If set, use the provided value
+    echo "Using provided publicdir: $publicdir"
+    ynh_app_setting_set --key="DIFFERENT" --value="true"
 fi
 
 cat <<EOF > "$install_dir/yunorunner/config.py"
@@ -81,6 +86,16 @@ EOF
 
 chmod 400 "$install_dir/yunorunner/config.py"
 chown "$app:$app" "$install_dir/yunorunner/config.py"
+
+ynh_app_setting_set --key="BASE_URL" --value="https://$domain"
+ynh_app_setting_set --key="BASE_PUBLIC_URL" --value="$publicdir"
+ynh_app_setting_set --key="EXECUTOR" --value="$executor"
+ynh_app_setting_set --key="APPSREPO" --value="$appsrepo"
+ynh_app_setting_set --key="PORT" --value="$port"
+ynh_app_setting_set --key="YNH_BRANCH" --value="$ynhbranch"
+ynh_app_setting_set --key="DIST" --value="$distributionchoice"
+ynh_app_setting_set --key="GITHUB_COMMIT_STATUS_TOKEN" --value="$githubtoken"
+ynh_app_setting_set --key="GITHUB_WEBHOOK_SECRET" --value="$webhooksecret"
 
 #=================================================
 # ADD SYSTEM CONFIGURATION
@@ -151,7 +166,7 @@ ynh_replace \
     --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
+cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
 mv "$PWD/apply_changes.py" "/var/www/yunorunner/yunorunner/apply_changes.py"
 chown "$app:$app" "/var/www/yunorunner/yunorunner/apply_changes.py"
@@ -164,7 +179,7 @@ chmod 744 "/var/www/yunorunner/yunorunner/apply_changes.py"
 ynh_script_progression "Starting $app's systemd service..."
 
 # Start a systemd service
-ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
+ynh_systemctl --service="$app" --action="start" --log_path="systemd"
 
 #=================================================
 # FINISH INSTALLATION
