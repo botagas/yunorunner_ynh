@@ -166,7 +166,7 @@ ynh_replace \
     --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
+cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
 mv "$PWD/apply_changes.py" "/var/www/yunorunner/yunorunner/apply_changes.py"
 chown "$app:$app" "/var/www/yunorunner/yunorunner/apply_changes.py"
