@@ -9,7 +9,7 @@ description.fr = "Runner d'intégration continue de YunoHost"
 
 version = "2024.12.10~ynh1"
 
-maintainers = []
+maintainers = ["botagas"]
 
 [upstream]
 license = "GPL-3.0-or-later"
@@ -100,8 +100,9 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
-    main.default = 8095
+    main.default = 8099
     main.exposed = "TCP"
+
 
     [resources.apt]
     packages = [
