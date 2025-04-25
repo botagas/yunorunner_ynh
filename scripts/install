@@ -100,13 +100,6 @@ ynh_config_add_systemd
 #=================================================
 ynh_script_progression "Applying patches to Python scripts..."
 
-# Add source
-#ynh_replace \
-#    --match="#!/bin/bash" \
-#    --replace="#!/bin/bash\nsource \"/var/www/yunorunner/venv/bin/activate\"" \
-#    --file="/var/www/yunorunner/package_check/package_check.sh"
-
-# Replace BASE_URL with BASE_PUBLIC_URL
 ynh_replace \
     --match=$'ci_name = app.config.BASE_URL.lower().replace(\"https://\", \"\").split(\".\")[0]' \
     --replace=$'ci_name = app.config.BASE_PUBLIC_URL.lower().replace(\"https://\", \"\").split(\".\")[0]' \
@@ -127,18 +120,6 @@ ynh_replace \
     --match="\"BASE_URL\": \"\"," \
     --replace="\"BASE_URL\": \"\",\n        \"BASE_PUBLIC_URL\": \"\",\n        \"EXECUTOR\": \"\",\n        \"APPSREPO\": \"\"," \
     --file="/var/www/yunorunner/yunorunner/run.py"
-
-# Replace the git clone command to include necessary changes
-ynh_replace \
-    --match='git clone --quiet \$git_repository "./package_linter"' \
-    --replace='git clone --quiet $git_repository "./package_linter"\n    # IMPORT_SYS_PLACEHOLDER\n    # Apply other replacements\n    sed -i '"'s|https://github.com/YunoHost-Apps|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|https://github.com/labriqueinternet|https://github.com/{app.config.EXECUTOR}|g'"' ./package_linter/tests/test_catalog.py\n    sed -i '"'s|\"https://github.com/YunoHost/apps\"|app.config.APPSREPO|g'"' ./package_linter/tests/test_catalog.py\n    git config --global --add safe.directory /var/www/yunorunner/package_check\n    git config --global --add safe.directory /var/www/yunorunner/package_check/package_linter/.apps\n    git config --global --add safe.directory /var/www/yunorunner/package_check/package_linter' \
-    --file="/var/www/yunorunner/package_check/lib/common.sh"
-
-# Step 2: Replace the placeholder with the actual code
-ynh_replace \
-    --match='# IMPORT_SYS_PLACEHOLDER' \
-    --replace=$'sed -i \'1 i from sys import path\\\\nfrom types import SimpleNamespace\\\\npath.append("/var/www/yunorunner/yunorunner")\\\\n\\\\n# Load variables directly from config.py\\\\nconfig_dict = {}\\\\nexec(open("/var/www/yunorunner/yunorunner/config.py").read(), config_dict)\\\\n\\\\n# Convert the config dictionary into an object with attributes\\\\nconfig = SimpleNamespace(**config_dict)\\\\n\\\\n# Initialize app and assign config\\\\napp = type("App", (object,), {})()\\\\napp.config = config\\\\n\' ./package_linter/tests/test_catalog.py' \
-    --file="/var/www/yunorunner/package_check/lib/common.sh"
 
 # Replace "github-actions[bot]" with app.config.EXECUTOR
 ynh_replace \
@@ -170,19 +151,12 @@ ynh_replace \
     --replace='job_url = app.config.BASE_URL + app.url_for("html_job", job_id=job.id)\n    public_url = app.config.BASE_PUBLIC_URL + app.url_for("html_job", job_id=job.id)' \
     --file="/var/www/yunorunner/yunorunner/run.py"
 
-# ynh_replace \
-#     --match=$'({shield_badge_url})]({job_url})' \
-#     --replace=$'({shield_badge_url})]({public_url})' \
-#     --file="/var/www/yunorunner/yunorunner/run.py"
-
-# ynh_replace \
-#     --match=$'({summary_url})]({job_url})' \
-#     --replace=$'({summary_url})]({public_url})' \
-#     --file="/var/www/yunorunner/yunorunner/run.py"
-
 sudo cat "$PWD/status-integration" >> "/var/www/yunorunner/yunorunner/run.py"
 
-pip install imgkit --break-system-packages
+mv "$PWD/apply_changes.py" "/var/www/yunorunner/yunorunner/apply_changes.py"
+chown "$app:$app" "/var/www/yunorunner/yunorunner/apply_changes.py"
+chmod 744 "/var/www/yunorunner/yunorunner/apply_changes.py"
+/usr/bin/env python3 "$PWD/run_job_changes.py"
 
 #=================================================
 # START SYSTEMD SERVICE
