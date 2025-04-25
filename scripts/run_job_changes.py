@@ -118,6 +118,11 @@ def skip_user_check_in_api():
 
     with run_py_path.open("r") as file:
         content = file.read()
+    
+    # Check if the function has already been replaced
+    if "async def is_user_in_organization(user):\n    return response.empty(status=200)" in content:
+        print("is_user_in_organization function already modified to skip the user check.")
+        return
 
     # Replace the is_user_in_organization function with a version that skips the check
     new_content = re.sub(
