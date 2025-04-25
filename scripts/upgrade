@@ -221,7 +221,7 @@ chmod 744 "/var/www/yunorunner/yunorunner/apply_changes.py"
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start" --log_path="systemd" --timeout=30
+ynh_systemctl --service="$app" --action="start" --log_path="systemd"
 
 #=================================================
 # DEACTIVATE MAINTENANCE MODE

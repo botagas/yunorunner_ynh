@@ -4,6 +4,7 @@ test_format = 1.0
 
 [default]
 
+    # exclude = ["install.root", "install_subdir", "install.multi"]
     args.context = "personal_ci"
     args.mode = "manual"
     args.cluster = false
@@ -14,9 +15,5 @@ test_format = 1.0
     args.webhooksecret = "test"
     args.distributionchoice = "bullseye"
     args.ynhbranch = "stable"
-
-    # ------------
-    # Tests to run
-    # ------------
 
 
