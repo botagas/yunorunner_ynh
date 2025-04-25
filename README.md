@@ -18,7 +18,7 @@ It shall NOT be edited by hand.
 
 ## Overview
 
-YunoRunner is a Continuous Integration (CI) server tailored for testing YunoHost app packages. It leverages **Incus** for containerized testing environments and integrates with [package_check](https://github.com/YunoHost/package_check) to automate the validation process.
+YunoRunner is a Continuous Integration (CI) app tailored for testing YunoHost app packages. It leverages **Incus** for containerized testing environments and integrates with [package_check](https://github.com/YunoHost/package_check) to automate the validation process.
 
 This package allows you to self-host a YunoRunner instance and use it with your own GitHub repositories. The setup process includes:
 
@@ -52,6 +52,7 @@ This package allows you to self-host a YunoRunner instance and use it with your 
 ```markdown
 [![Integration level](https://img.shields.io/endpoint?url=https://sub.domain.tld/api/badge/<app_name>/integration)](https://ci-apps.yunohost.org/ci/apps/<app_name>/)
 ![Working status](https://img.shields.io/endpoint?url=https://sub.domain.tld/api/badge/<app_name>/status)
+```
 
 **Shipped version:** 2024.12.10~ynh1
 
